@@ -5,9 +5,10 @@ addons:
      - texlive
      - texlive-lang-german
      - texlive-latex-extra
-script: 
+script:
+  - cd latex
   - bash build.sh
-  - cp diplom.pdf Nachrichtenaustausch_unter_Angriff.pdf
+  - cp diplom.pdf ../Nachrichtenaustausch_unter_Angriff.pdf
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
