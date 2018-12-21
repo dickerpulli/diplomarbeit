@@ -1,0 +1,18 @@
+language: minimal
+addons:
+  apt:
+    packages:
+     - texlive
+     - texlive-lang-german
+     - texlive-latex-extra
+script: 
+  - bash build.sh
+  - cp diplom.pdf Nachrichtenaustausch_unter_Angriff.pdf
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file: Nachrichtenaustausch_unter_Angriff.pdf
+  skip_cleanup: true
+  on:
+    tags: true
+    
