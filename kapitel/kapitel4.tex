@@ -1,0 +1,161 @@
+\chapter{Praktische Implementierung}
+\label{cha:praxis}
+Im vorhergehenden Kapitel wurden die theoretischen Grundlagen beleuchtet, die für den Angriff eines Netzwerkes von Bedeutung sind. Im Folgenden wird exemplarisch ein Angriffsszenario ausgewählt. Dieses wird in einem Netzwerksimulator visualisiert und untersucht. Dieser Angriff wird dabei mit einer geeigneten Maßnahme bekämpft.
+
+\section{Auswahl eines Szenarios}
+Der Grundgedanke bei der Implementierung ist die Sicherstellung eines Nachrichtenaustauschs während eines Netzwerkangriffs. Hierbei lässt sich eine Kritische Infrastruktur simulieren, deren Kommunikationssystem unter allen Umständen noch funktionieren sollte, wenn ein Angriff gestartet wird. Als Beispiel lässt sich hier ein Atomkraftwerk anführen, dessen Sensoren und Kontrollstationen über ein Netzwerk kommunizieren. Deren Kommunikation ist für die Aufrechterhaltung der Sicherheit eines Kraftwerks von immenser Bedeutung.
+
+Als weiteres Beispiel sei hier die eMail-Kommunikation zwischen Banken, die beispielsweise auf diesem Weg Informationen über das aktuelle Börsengeschehen austauschen, angeführt. Ein Ausfall oder gar Manipulation dieser Kommunikation könnte möglicherweise zu finanziellen Schäden bei Anlegern aber auch bei der bankinternen Bilanz führen.
+
+Die verschiedenen Kommunikationsvarianten können nun auf den vier verschiedenen Ebenen der Netzwerkstruktur angegriffen werden.
+\begin{enumerate}
+ \item Physikalische Ebene, z.B. durch Lichtwellen
+ \item Netzwerkebene, z.B. IP
+ \item Transportebene, z.B. TCP
+ \item Applikationsebene, z.B. HTTP
+\end{enumerate}
+Jede dieser Ebenen ist potentiell angreifbar. Im folgenden werden die einzelnen Ebenen nach möglichen Gefahrenpunkten hin untersucht, und Varianten erläutert, die den Nachrichtenaustausch trotz eines Angriffs dieser Ebene noch gewährleisten. Die Gewährleistung dieses Nachrichtenaustauschs wird im weiteren Verlauf so definiert, dass es bedeutet, dass die Kommunikation, wie sie vor dem Angriff stattgefunden hat, auch während bzw. nach dem Angriff weiterhin so funktioniert, als hätte kein Angriff stattgefunden.
+
+Jede Ebene ist von der unter ihr liegenden Ebene abhängig. Das heißt, je weiter unten der Angriff im Ebenenmodell stattfindet, desto größer ist die Beeinträchtigung des gesamten Netzwerks.
+
+\begin{description}
+\item[Physikalische Ebene] Ein Angriff auf unterster Ebene ist die wirkungsvollste, wenn auch nicht praktikabelste Variante. Ein solcher Angriff wäre beispielsweise das einfache Kappen eines Kabels oder auch die gewaltsame, physische Zerstörung eines Routers.
+
+Gegenmaßnahmen für diese Art von Angriff sind ebenfalls physisch. So sind sensible Rechnersysteme in speziell gesicherten Räumen untergebracht, deren Zutritt nur autorisierten Personen möglich ist. Kabelstränge können zum einen verzweigt werden um einem \textit{Single-Point-Of-Failure} zu umgehen, zum anderen aber auch in massive Kabelrohre eingebettet werden, um einen physischen Zugang zu erschweren.
+
+\item[Netzwerkebene] Auf dieser Ebene befinden sich die Router. Dortige Angriffe können entweder direkt auf die Router zielen oder auf Routingprotokolle, mit deren Algorithmen das korrekte Weiterversenden von eingehenden Paketen berechnet wird.
+
+Eine Maßnahme zur Verhinderung von Angriffen bzw. zur Gewährleistung des Routings liegt in der Verschlüsselung von Paketen, im speziellen in der Verschlüsselung von Routinginformationen. Durch eine solche Maßnahme wird es dem Angreifer erschwert, die enthaltenen Informationen auszulesen oder zu manipulieren.
+
+\item[Transportebene] Ein Angriff auf der Transportebene ist beispielsweise SYN-Flood. Hierbei wird der Verbindungsstatus von TCP ausgenutzt um einen Server zu blockieren.
+
+Eine Gegenmaßnahme wäre hierbei ein alternativer Transport über UDP, bei dem die Applikationsebene die zusätzlichen Funktionen von TCP nachbildet. Eine andere Möglichkeit wäre die Beschränkung der Anzahl von frei zu vergebenen TCP-Ports. So könnte eine Liste erstellt werden, die nur autorisierten Nutzern einen TCP-Port zur Verfügung stellt.
+
+\item[Applikationsebene] Bei Angriffen auf Applikationsebene geht es im einzelnen um die Serverdienste. So werden immer wieder Sicherheitslücken in Serverapplikationen entdeckt, die dem Angreifer ermöglichen sensible Konfigurationen des Servers zu ändern oder auch diesen zum Absturz zu bringen.
+
+Die bedeutendste Gegenmaßnahme ist die regelmäßige Installation von Sicherheitsupdates der Serverssoftware. Diese Updates schließen die vorhandenen, bekannten Sicherheitslücken. Im Weiteren könnte überlegt werden, die gesamte Serverapplikation redundant auszulegen, und eine zweite Serverapplikation mit Software eines anderen Entwicklerteams zu nehmen. In seltenen Fällen besitzen zwei verschiedenen Serverapplikationen die gleichen Sicherheitslücken. So könnte beim gezielten Angriff auf die Lücke des einen Servers der andere Server alternativ die Aufgaben des angegriffenen Servers übernehmen.
+\end{description}
+
+\section{Der Simulator}
+Die gewählte Implementierung eines Angriffs auf ein Netzwerk wurde in einem Netzwerksimulator realisiert. Dieser Simulator ist eine Entwicklung des DAI-Labors\footnote{\url{http://www.dai-labor.de}} der TU-Berlin. Der Simulator dient der Entwicklung und des Testens von neuer Sicherheitssoftware. So können beispielsweise verschiedene Intrusion-Detection-Systeme (siehe Abschnitt~\ref{sec:ids}) auf ihre Wirksamkeit überprüft werden.
+
+Auf Basis von Eclipse\footnote{\url{http://www.eclipse.org}} als Entwicklungsumgebung, der Programmiersprache Java und JIAC als ein auf Agententechnologien beruhendes Serviceware-Framework wurde der Simulator entwickelt. Eine grafische Benutzeroberfläche ermöglicht den Aufbau eines simulierten Netzwerkes ohne tiefer gehende Kenntnisse der zugrunde liegenden Architektur der Software. Beispielsweise können Web-Clients, Web-Server und Router platziert und über simulierte Netzwerklinks miteinander verbunden werden. Weitere Geräte, die bisher in den Simulator eingebunden worden sind: Mail-Server und Proxy-Server.
+
+Bei der Realisierung der Netzwerkverbindungen wurde bewusst auf die Java-Netzwerk\-sockets verzichtet. Alternativ wurden eigene Sockets programmiert, die auf der TCP/IP-Archi\-tektur aufbauen. So gibt es einen IP-Layer, der für das Erstellen von IP-Paketen sowie deren Fragmentierung zuständig ist. Es gibt darüber hinaus einen Network-Layer, der das Routing steuert und einen Transport-Layer, indem die Funktionalität von TCP und UDP abgebildet wird. Jedes Gerät im Netzwerk enthält demnach ein System aus mehreren Ebenen, die jede für sich spezielle Aufgaben erfüllen. Außerdem existiert auf den Endgeräten, also Servern und Clients, noch eine Applikationsebene, welche die Server- bzw. Client-Applikationen enthält.
+
+\subsection{Relevante Geräte}
+Die für die Implementierung des Angriffsszenarios relevanten Geräte sind Web-Clients, Web-Server und Router.
+\begin{description}
+\item[Web-Client] Der Web-Client ist in der Lage Webseiten von allen Web-Servern, die im gesamten Netzwerk vorhanden sind, anzufordern. Dazu wird auf der Applika\-tionsebene des Clients ein HTTP-Request generiert und dort an die unteren Netzwerkebenen weitergegeben. Kommt auf dieses HTTP-Request ein HTTP-Response, also eine Antwort vom Web-Server, zurück, so wird diese im Browserfenster angezeigt.
+
+\item[Web-Server] Der Web-Server wartet auf HTTP-Requests von Web-Clients. Erhält er ein solches Request, so wird ein Server-Thread gestartet, der dann wiederum die Antwort an den anfragenden Client zurücksendet. Dies geschieht konform zur Spezifikation des HTTP-Protokolls.
+
+\item[Router] Die Router sind für die Verteilung der IP-Pakete im Netzwerk zuständig. Für das Erstellen seiner Routinginformationen nutzt der Router standardmäßig OSPF (\textit{Open Shortest Path First}), ein Link-State Routing Protokoll. Wahlweise lässt sich hier auch ISIS (\textit{Intermediate System to Intermediate System Protocol}) als Routingprotokoll einstellen.
+\end{description}
+
+Der einfache Aufbau eines Netzwerks, bestehend aus mehreren Web-Servern, Web-Cients und Routern, könnte dann so aussehen, wie z.B. in Abbildung~\ref{fig:beispielaufbau}.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{beispielaufbau}
+\caption{Beispielhafter Aufbau eines kleinen Netzwerks in NeSSi}
+\label{fig:beispielaufbau}
+\end{figure}
+
+Dies ist die Ausgangsimplemetierung des Netzwerksimulators NeSSi. Sie wird nun anhand eines ausgewählten, beispielhaften Angriffsszenarios erweitert. Dieser Angriff soll folgend mit einer Gegenmaßnahme abgeschwächt werden, so dass ein Nachrichtenaustausch weiterhin möglich ist. Diese Maßnahme wird ebenfalls in den Simulator integriert und dort getestet.
+
+\section{Implementierung}
+Wie in Abschnitt~\ref{sec:trojaner} schon erwähnt wurde, werden DDoS-Angriffe in der Regel über einen IRC gestartet. Dazu sind eine große Anzahl, beispielsweise über Trojaner infizierter Rechner über ein IRC-Netzwerk miteinander verbunden und können so kommunizieren. Der Angreifer hat dafür gesorgt, dass er nun viele Rechner weltweit ansteuern und ihnen Befehle erteilen kann. Sie wurden zu Bots. Es kann Befehle absetzen, die z.B. einen SYN-Flood auf ein bestimmtes Ziel veranlassen. Alle verbundenen Bots erhalten diesen Befehl und werden das, vom Angreifer gewünschten Ziel, mit SYN-Paketen "`bombardieren"'. Dieses Vorsehen führt dazu, dass viele TCP-Verbindungen geöffnet werden. Die Verbindungen sind jedoch nicht komplett geöffnet, da das Antwortpaket des Angreifenden ausbleibt (3-Wege-Handshake: siehe Abschnitt~\ref{sec:synflood}). Da das Betriebssystem nur begrenzt halboffene Verbindungen bereit stellt, ist es ab einem gewissen Zeitpunkt nicht mehr möglich, neue TCP-Verbindungen zu öffnen. Dies schließt auch die Versuche von Benutzern ein, die nicht Teil des Angriffs sind. 
+
+Hier muss die Gegenmaßnahme ansetzen. Während eines solchen DDoS-Angriffs, eines SYN-Floods, sollen trotzdem noch neue TCP-Verbindungen möglich sein. Hierzu muss für legitime neue Verbindungen eine Reserve zurückgehalten werden. Aus dieser Reserve werden nur dann neue Verbindungen entnommen, wenn die Anfrage von einer autorisierten Stelle kommt. Die IP-Adressen autorisierter Clients werden in einer \textit{Whitelist} gespeichert, die sowohl statische als auch dynamische Elemente enthält. Ein bestimmter Anteil der maximal möglichen Anzahl an halboffenen Verbindungen wird für diese Whitelist reserviert.
+
+\subsection{IRC-Szenario}
+Für die Realisierung eines Angriffs mittels eines IRC-Netzwerks, sind weitere Geräte im Simulator zu entwickeln. Zum einen wird ein Angreifer benötigt, der die einzelnen Bots mit Hilfe des IRC-Protokolls steuert und ihnen den Befehl zum SYN-Flood eines ausgewählten Ziels erteilt. Dieses Ziel könnte beispielsweise ein Web-Server sein.
+
+Zum anderen wird für die Kommunikation der Bots und des Angreifers ein IRC-Server benötigt. Dieser IRC-Server ist als vermittelnde Einheit zwischen den Bots und dem Angreifer zu sehen. Alle Bots sind auf diesem IRC-Server eingewählt, und sind Teilnehmer desselben IRC-Kanals auf diesem Server.
+
+Neben diesen neuen Endgeräten ist auch noch die Modifizierung der Web-Clients nötig. Damit diese Clients nicht nur in der Lage sind Webseiten von diversen Web-Servern abzurufen sondern auch SYN-Floods zu tätigen, ist dafür zu sorgen, dass sie als Bots in einem Bot-Netzwerk teilnehmen können. Diese Bots können sich auf einem beliebigen IRC-Server einwählen und dort in einem definierten IRC-Kanal auf Anweisungen warten. 
+
+\subsubsection{IRC-Server}
+Zur Integration des IRC-Servers wurde eine bereits bestehende GPL-lizenzierte Implementierung namens \textit{Sonata IRC Network}\footnote{\url{http://sourceforge.net/projects/sonata/}} genutzt. Es wurde ein neues Gerät erstellt, auf dem im Basiszustand ein Thread läuft, der diesen IRC-Dämon enthält. Als IRC-Dämon wird im weiteren Verlauf die verwendete Software des IRC-Servers bezeichnet. Die Implementierung dieses IRC-Dämons musste an die Socketimplementierung von NeSSi angepasst werden.
+
+In der Version mit Java-Sockets wird im IRC-Dämon der Server-Socket erstellt. Dieser wartet dann auch eingehende Verbindungen. Gehen Anfragen auf neue TCP-Verbindun\-gen ein, so wird ein Client-Socket erstellt, der dann wiederum einem neu erstellten Client-Thread übergeben wird. Dieser neu erstellte Thread kommuniziert über den übergeben Socket mit dem IRC-Client.
+
+Mit der Socket-Implementierung von NeSSi muss dies im geringen Umfang ummodelliert werden. Hier wird bereits in der IRC-Server-Applikation, die den IRC-Dämon als Thread enthält der Server-Socket kreiert. Dieser wird dem IRC-Dämon übergeben. Eingehende Verbindungsanfragen auf dem erzeugten Server-Socket werden in der Transportebene behandelt. Dort wird ein Client-Socket erstellt, der an die Applikationsebene des IRC-Servers weitergegeben wird. Dort wird der erhaltenen Client-Socket wiederum an den IRC-Dämon übergeben, der dann intern einen neuen Client-Thread mit diesem erhaltenen Socket erstellt.
+
+\subsubsection{Bots}
+Der Web-Client in der Ausgangsversion enthält Applikationen zum Browsen und zur Versendung von UDP-Paketen. Um nun die Kommunikation mit einem IRC-Server möglich zu machen muss auf dem Web-Client eine weitere Applikation laufen, die die Verbindung zum IRC-Server steuert. Diese Applikation heißt Bot-Applikation. Auch für diese Applikation wurde eine bereits existierende Implementierung eines IRC-Clients mit dem Namen PircBot\footnote{\url{http://www.jibble.org/pircbot.php}} benutzt. Die Bot-Applikation des Web-Clients besitzt einen Thread, der diesen PircBot enthält.
+
+Auch die Implementierung des PircBot musste für die eigene Socket-Implementierung von NeSSi umgestaltet werden. Sobald die Verbindung zu einem IRC-Server aufgebaut werden soll, wird auf der Transportebene des Web-Clients ein Client-Socket erzeugt. Dieser Socket kann von der Bot-Applikation benutzt werden. Folgend wird dieser erzeugte Socket an den PircBot weitergegeben. Innerhalb des PircBot ist die Erstellung eines Sockets demnach nicht nötig. Der erhaltene Socket kann somit zur Einwahl auf dem IRC-Server und zur weiteren Kommunikation mit diesem genutzt werden.
+
+Um von der grafischen Benutzerschnittstelle in der Bot-Applikation eines Web-Clients die Einwahl auf einem vorhandenen IRC-Server zu erreichen, wird ein Event generiert, welches Daten zur IP-Adresse des IRC-Servers und dem IRC-Kanal enthält. Diese Daten wurden zuvor über einen Dialog ermittelt. Der generierte Event löst in der Bot-Applikation des Web-Clients die Ausführung einer bestimmten Methode aus. Diese Methode erzeugt dann den Thread, der mittels des PircBot und der übermittelten Daten eine TCP-Verbindung mit dem IRC-Server herstellt, und auf dem IRC-Server dem gewünschten IRC-Kanal beitritt.
+
+Nach der erfolgreichen Einwahl ist der Web-Client nun ein Bot, der auf eingehende Textnachrichten wartet. Speziell codierte Textnachrichten, die vom Angreifer in dem IRC-Kanal gesendet werden, lösen in der Bot-Applikation bestimmte Reaktionen aus.
+
+\subsubsection{Angreifer}
+Der Angreifer enthält, genau wie der Web-Client, eine Bot-Applikation. Auch hier wird, ausgehend von der grafischen Oberfläche, ein Event generiert, welches die Bot-Applikation dazu veranlasst, einen Thread mit enthaltenem PircBot zu starten. Hier wird über einen Dialog der IRC-Server und IRC-Kanal gewählt. Zusätzlich wird ein Befehl erwartet, der allen Bots, die auf gewählten IRC-Kanal des gegebenen IRC-Servers auf Nachrichten warten, gesendet wird. Für die Ausführung eines SYN-Floods wird folgende Syntax als Textnachricht versendet:
+\begin{quotation}
+\texttt{synflood <ip1> <ip2> <count>}
+\end{quotation}
+\texttt{ip1} ist hierbei die gespoofte Absenderadresse des SYN-Pakets, \texttt{ip2} die Zieladresse. \texttt{count} bezeichnet die Anzahl der zu sendenden SYN-Pakete pro Bot. Wird nun \texttt{synflood 130.149.5.2 130.149.11.2 1000} an Kanal X des IRC-Servers Y gesendet, so werden alle Bots, die auf Kanal X des IRC-Servers Y horchen, einen SYN-Flood auf den Rechner mit der IP \texttt{130.149.11.2} starten und sich als \texttt{130.149.5.2} ausgeben. Die Flutung besteht aus $1000$ SYN-Paketen.
+
+Ein solches SYN-Flood könnte nun auf einen Web-Server zielen. Der Aufbau eines einfachen Netzwerks ist in Abbildung~\ref{fig:ircszenario} zu sehen. Teilnehmer des Netzwerks sind IRC-Server, Angreifer (Attacker), Bots (Web-Clients) und ein anzugreifender Web-Server.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{ircszenario}
+\caption{Aufbau eines Gesamtsystems im Angriffsszenario}
+\label{fig:ircszenario}
+\end{figure}
+
+\subsection{Halboffene Verbindungen in TCP}
+Da in der bestehenden Implementierung von NeSSi die Limitierung von halboffenen TCP-Verbindungen noch nicht eingebaut ist, musste diese zunächst verwirklicht werden. Zu diesem Zweck wurde eine Klasse \textit{HalfOpenedConnections} entwickelt, welche diese halboffenen Verbindungen verwaltet. Sie enthält eine Liste von (Socket,Zeit)-Paaren, die mit Hilfe der enthaltenen Methoden aktualisiert werden. Jedes Element der Liste besteht demnach aus einem Socket und einem Zeitstempel, der für die spätere Aktualisierung der Liste notwendig ist.
+
+Bei jeder eingehenden Anfrage einer TCP-Verbindung, also dem Erhalt eines SYN-Pakets wird der erzeugte Client-Socket in die Liste der halboffenen Verbindungen eingefügt. Beim Einfügen wird als Zeitstempel die aktuelle Zeit benutzt.
+
+Beim Erhalt eines ACK-Pakets, also der Bestätigung der Verbindung ändert sich der Status der TCP-Verbindung von \textit{halboffen} nach \textit{offen}. Somit kann der Socket, dem dieses TCP-Verbindung zugeordnet wird aus der Liste der halboffenen Verbindungen entfernt werden.
+
+Neben der Entfernung nach erfolgreichem Verbindungsaufbau gibt es noch die Möglichkeit eines \textit{timeout}. Sollte nach einer definierten Zeit kein ACK-Paket zur Bestätigung der TCP-Verbindung eintreffen, so wird der Socket, dessen "`Zeit abgelaufen ist"', zur Schonung von Ressourcen aus der Liste genommen. Die Überprüfung solcher \textit{timeouts} geschieht direkt nach dem Eintreffen eines neuen SYN-Pakets. Dabei wird für alle Elemente in der Liste überprüft, ob die aktuelle Zeit vor oder nach der Zeit liegt, die sich ergibt, wenn Zeitstempel und timeout-Zeit addiert werden. Liegt die errechnete Zeit nach der aktuellen Zeit, so liegt ein timeout vor und das zugehörige Element wird aus der Liste gelöscht.
+
+\subsection{Whitelist-Prinzip}
+Mit der Implementierung der begrenzten Liste von halboffenen Verbindungen ist nun für die Angreifer die Möglichkeit gegeben, diese Begrenzung zu missbrauchen. Da nun nur begrenzt halboffene Verbindungen möglich sind, erreicht der Angreifer mit einem SYN-Flood den Effekt, dass legitime Anfragen bei voller Liste von halboffenen Verbindungen ignoriert werden.
+
+Hier setzt die Whitelist an. Beispielsweise die Hälfte der begrenzten Anzahl an halboffenen Verbindungen wird nun nur noch für Anfragen benutzt, deren Quell-IP-Adresse in der Whitelist enthalten sind. Diese Whitelist enthält zwei verschiedene Listen. Eine statische Liste, welche IP-Adressen enthält, die für unbegrenzte Zeit priorisiert werden sollen. Zum zweiten gibt es eine dynamische Liste, deren Einträge laufend geändert werden. So wird eine IP-Adresse in diese dynamische Liste eingefügt, wenn sie die TCP-Verbindung regulär, also mit einem FIN-Paket, beendet. So wird erreicht, dass Angreifer, die nur SYN-Pakete senden, in diese Liste aufgenommen werden. 
+
+Wie auch bei der Liste der halboffenen Verbindungen bekommt jede IP-Adresse, die in die dynamische Liste eingefügt wird, einen Zeitstempel zugeordnet. Jeder Eintrag darf nur für eine fest definierte Zeit in der dynamischen Liste geführt werden. Sie ist nach dem gleichen Prinzip timeout-gesteuert wie die Liste der halboffenen Verbindungen. Somit ist gewährleistet, dass die dynamische Liste nicht zu groß wird und irgendwann so viele IP-Adressen enthält, dass die gespooften Absender-IP-Adressen der SYN-Floods in zu großer Anzahl in der Liste vorhanden sind, und die Whitelist ihre Wirkung verliert.
+
+Um diese Implementierung zu testen, wurden verschiedene Szenarien erstellt.
+
+\section{Test}
+Um die Funktionalität und Wirksamkeit des Whitelist-Ansatzes zu testen, wurde ein Netzwerkaufbau (Abbildung~\ref{fig:testaufbau}) konstruiert.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.7\textwidth]{testaufbau}
+\caption{Testaufbau}
+\label{fig:testaufbau}
+\end{figure}
+In diesem Netzwerk existieren 30 Web-Clients, ein Web-Server, ein IRC-Server und eine Attacker. In drei verschiedene Szenarien wurden Daten gesammelt.
+
+\subsection{Szenario 1}
+Im ersten Szenario hat jeder der 20 Web-Clients auf der linken Seite alle $0,5$ Sekunden einen Browse-Versuch unternommen. Jeder der Web-Clients kann vier Browse-Vorgänge gleichzeitig durchführen. Die Liste der halboffenen TCP-Verbindungen auf dem Web-Server hat eine Länge von $100$.
+
+\subsection{Szenario 2}
+Im zweiten Szenario tätigte wiederum jeder der 20 Web-Clients Browse-Versuche. Hierbei wurde nun ein DDoS Angriff auf den Web-Server unternommen. Die 10 Web-Clients, die sich rechts befinden, registrierten sich dazu beim IRC-Server. Der Attacker registrierte sich ebenfalls beim IRC-Server und gab den Befehl des SYN-Flood auf den Web-Server. Alle $0,2$ Sekunden wurde von jedem Web-Client ein SYN-Paket an den Web-Server gesendet.
+
+\subsection{Szenario 3}
+Auch im dritten Szenario tätigte jeder der 20 Web-Clients Browse-Versuche. Auch hier wurde ein DDoS Angriff auf den Web-Server unternommen. Weiterhin wurde auf dem Web-Server das Whitelist-Prinzip aktiviert. Jede erfolgreicher Verbindungsaufbau führte dazu, dass der, dieser Verbindung zugeordnete Client, in die Whitelist aufgenommen wurde.
+
+\subsection{Auswertung}
+In jedem Szenario wurden Daten in einer Datei gespeichert. Sowohl die versuchten, als auch die erfolgreich aufgebauten Verbindungen wurden registriert. Die Daten wurden in ein Diagramm, wie in Abbildung~\ref{fig:diagramm}, exportiert. Der Web-Server hat eine Beschränkung in der Anzahl der halboffenen Verbindungen. Es sind im Zustand ohne Whitelist-Prinzip $100$ halboffene Verbindungen möglich. Jede weitere Verbindungsanfrage wird verworfen.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.9\textwidth]{diagramm}
+\caption{Auswertungsdiagramm}
+\label{fig:diagramm}
+\end{figure}
+
+Es ist zu erkennen, dass die Kurve des ersten Szenarios ("`Ohne DDoS"') kontinuierlich und annähernd linear steigt. Dies war aufgrund des Testaufbaus auch so zu erwarten. Da alle 20 Web-Clients insgesamt maximal 80 Browse-Anfragen stellen können, wurde die maximale Anzahl an halboffenen Verbindungen des Web-Servers nicht erreicht. Daher wird jede Anfrage akzeptiert. Es ist anzumerken, dass die Kurve aufgrund eines geringeren Datenvolumens künstlich verlängert wurde. Dies dient der Vergleichbarkeit der Kurven. Es ist möglich, da die Kurve linear verläuft.
+
+Beim zweiten Szenario ("`Mit DDoS"') werden wesentlich weniger Verbindungen zugelassen. Dies resultiert aus dem SYN-Flood. Dieser bewirkt eine ständige Überfüllung der Liste an halboffenen Verbindungen im Web-Server. Nach einem Timeout von $30$ Sekunden wird jede Verbindungsanfrage verworfen. Es besteht daher immer wieder die Möglichkeit, dass nicht jede legitime Verbindungsanfrage verworfen wird. Legitim sind hierbei die Browse-Anfragen der 20 Web-Clients. Die Anzahl der gelungenen Verbindungsaufbaue fällt mit $10\%$ jedoch sehr gering aus.
+
+Die Kurve des dritten Szenarios ("`Mit DDoS und Whitelist"') verläuft ähnlich wie die des zweiten Szenarios. Es ist jedoch zu sehen, dass ab einer Anzahl von etwa $300$ Anfragen die Kurve eine höhere Steigung aufweist. Dies ist dadurch zu erklären, dass die aktivierte Whitelist den Aufbau von legitimen neuen Verbindungen erleichtert. Der Web-Server reserviert 50 Plätze auf der Liste der halboffenen Verbindungen für Mitglieder der Whitelist. Diese Plätze sind vom SYN-Flood nicht betroffen. Mit fortlaufender Zeit werden immer mehr legitime Web-Clients Mitglieder der Whitelist. Somit steigt die Wahrscheinlichkeit eines erfolgreichen Verbindungsaufbaus.
+
+Insgesamt ist zu erkennen, dass der Whitelist-Ansatz eine Lösung anbietet. Die Wirkung ist jedoch gering. Weitere Bewertungen und Ausblicke werden in dem folgenden Fazit erörtert.

@@ -1,0 +1,11 @@
+\chapter{Fazit}
+\label{cha:fazit}
+Aus dem Diagramm (Abbildung~\ref{fig:diagramm}) ist die Wirksamkeit des Whitelist-Ansatzes zu erkennen. Mit steigender Versuchsdauer erhöht sich die Wahrscheinlichkeit eines erfolgreichen Verbindungsaufbaus, deren Wirkung jedoch nur sehr gering ist. Es ist zu erwarten, dass in einem länger andauernden Szenario, die Kurve "`Mit DDoS und Whitelist"' noch weiter an Steigung zunimmt. Dies liegt in der Aufnahme von weiteren Web-Clients in die Whitelist begründet.
+
+Während eines stattfindenden SYN-Flood ist die Aufnahme in die Whitelist nur schwer möglich. Ein Timeout verkleinert die Liste der halboffenen Verbindungen um jeweils ein Element. Nur in diesem Fall besteht Möglichkeit, dass eine Anfrage nicht verworfen wird. Da neben den Anfragen der Web-Clients aber weiterhin noch SYN-Pakete von Bots gesendet werden, ist die Wahrscheinlichkeit sehr gering, dass der Anfrage des Web-Clients genau dieser frei gewordene Platz zugeteilt wird. Nur wenn das SYN-Paket des legitimen Web-Clients nicht verworfen wird, besteht die Möglichkeit, dass die Verbindung zustande kommt. Einzig in diesem Fall wird der Web-Client in die Whitelist aufgenommen.
+
+In diesem Punkt zeigt das Whitelist-Prinzip einen Schwachpunkt. Der Angreifer könnte beispielsweise die Methodik der Aufnahme in die dynamische Whitelist erraten oder durch Probieren heraus finden.
+
+Bei dem hier implementierten Ansatz erfolgt die Aufnahme nach dem Senden eines ACK-Pakets. Die Bots des Angreifers könnten ein solches Paket aber auch senden. Damit würden sie in die Whitelist aufgenommen. Dies hätte die Unwirksamkeit der Whitelist zur Folge.
+
+Diese Whitelist-Methode ist nur eine von vielen Methoden zur Abwehr von Angriffen bzw. zur Begrenzung von Schäden durch Angriffe. Mit Hilfe von NeSSi könnten sich weitere Strategien entwickeln lassen. Das Einbinden des IRC-Protokolls als Kommunikationsmedium für Angreifer und Bots hat dem Simulator zusätzliche Flexibilität verliehen. Auf dieser Grundlage bestände die Möglichkeit, weitere Gegenmaßnahmen zur DDoS-Abwehr zu entwickeln und weitere Angriffsszenarien zu implementieren. Die implementierte Kommunikation über IRC eröffnet Perspektiven zukünftiger Forschungsanstrengungen.

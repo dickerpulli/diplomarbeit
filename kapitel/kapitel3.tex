@@ -1,0 +1,513 @@
+\chapter{Theoretischer Hintergrund}
+\label{cha:theorie}
+In diesem Kapitel wird der Hintergrund eines \textit{Nachrichtenaustauschs unter Angriff} theoretisch erläutert. Dazu werden zunächst Grundlagen geschaffen, auf denen dann in den weiteren Kapitel aufgebaut wird. So werden Bedrohungen von Netzwerken genannt und in einem historischen Rückblick exemplarisch dargelegt. Mit diesen Kenntnissen und Grundlagen lassen sich dann mögliche Verteidigungstrategien entwickeln.
+
+\section{Grundlagen}
+Zuerst einmal wird der Begriff "`Netzwerk"' etwas näher gebracht. Ein Netzwerk beschreibt im allgemeinen eine Verknüpfung mehrerer Computer untereinander, so dass diese miteinander kommunizieren können. Das Internet ist das größte Netzwerk das wir kennen. Es beschreibt die Verknüpfung tausender Netzwerke weltweit.
+
+Um nun miteinander kommunizieren zu können und die Komplexität einer solchen Kommunikation von Millionen von Computern im Rahmen zu halten, bedarf es einer Verteilung verschiedener Aufgaben auf einzelne Teilbereiche, \textbf{Layer} genannt. Ich benutzte im weiteren Verlauf die deutsche Übersetzung, Ebene.
+
+Jede Ebene ist nun eine Ansammlung von Protokollen, die nun bestimmte Funktionalitäten bieten. So übernimmt eine Ebene beispielsweise die physikalische Übertragung, eine andere gewährleistet das Finden des Empfängers und eine weitere sorgt für die verlustfreie Übertragung.
+
+\subsection{Das ISO/OSI-Modell}
+Ein Modell, welches nun die Aufgaben einer jeden Ebene definiert, ist das \textbf{ISO/OSI-Referenzmodell}. Es wurde 1983 als ISO-Standard (International Standards Organization) eingetragen\cite{tanenbaum}. Das ISO/OSI-Modell definiert sieben Ebenen, wie sie in Abbildung~\ref{fig:isoosi} zu sehen sind. Die Ebenen wurden so geschaffen, dass folgende Punkte gewährleistet sind\cite{tanenbaum}:
+\begin{itemize}
+% \labelitemi -
+ \item Jede Ebene sollte ein eigene Abstraktionsebene bilden
+ \item Jede Ebene sollte eine wohl definierte Aufgabe haben
+ \item Die Aufgabe jeder Ebene sollte sich nach den internationalen Protokollstandards richten
+ \item Der Datenfluss zwischen den Ebenen sollte möglichst gering gehalten werden
+ \item Die Anzahl der Ebenen sollte so gewählt sein, dass Aufgaben sich nicht überschneiden, aber die Übersichtlichkeit gewahrt wird 
+\end{itemize}
+
+\begin{figure}[htb]
+ \centering
+ \includegraphics[width=0.8\textwidth]{isoosi}
+ \caption{Das ISO/OSI-Ebenenmodell - Quelle: Tanenbaum\cite{tanenbaum}}
+ \label{fig:isoosi}
+\end{figure}
+
+\subsection{TCP/IP-Modell}
+Neben dem ISO/OSI-Modell wurde 1974 auch das \textbf{TCP/IP-Referenzmodell} definiert\cite{cerfkahn}. In diesem Modell gibt es nur vier Ebenen. Verglichen mit dem ISO/OSI-Modell wurden beim TCP/IP-Modell die ersten beiden Ebenen, deren Aufgaben eher physikalischer Natur sind, zusammengelegt. Wie in Abbildung~\ref{fig:tcpip} erkennbar ist, wurden weiterhin die Ebenen fünf und sechs komplett ausgespart.
+\begin{figure}[htb]
+ \centering
+ \includegraphics[width=0.8\textwidth]{tcpip}
+ \caption{Das TCP/IP-Ebenenmodell im Vergleich - Quelle: Tanenbaum\cite{tanenbaum}}
+ \label{fig:tcpip}
+\end{figure}
+
+Der weiter Verlauf der Arbeit wird sich nur mit den Ebenen \textit{Applikation}, \textit{Transport}, \textit{Internet} bzw. \textit{Netzwerk} und \textit{Physikalisch} bzw. \textit{Host-to-Network} beschäftigen. Im Folgenden werden nun diese vier Ebenen näher erläutert und ein paar Beispiele verdeutlichen die Funktionsweise der einzelnen Ebenen.
+
+\subsection{Host-to-Network Ebene}
+Die Host-to-Network Ebene bildet die Basis der Datenübertragung. Sie handhabt die physikalische Übertragungsweise. Eine Art wäre die Übertragung über Lichtwellenleiter, eine andere die elektrische Übertragung über die üblichen Kupferkabel. Neben dieser untersten Basisfunktionalität bietet sie aber auch noch die Funktionalität der im ISO/OSI-Modells Data-Link-Layer genannten Ebene. Diese bietet Funktionen, wie die Behandlung von Fehlern. Fehler können etwa durch physikalische Einflüsse, wie Leitungsrauschen entstehen.
+
+\subsection{Netzwerkebene}
+Diese Ebene ist für den korrekten Versand von einzelnen Paketen durch ein Netzwerk verantwortlich. Das zugrunde liegende Protokoll ist das \textbf{IP-Protokoll}. Mit Hilfe dieses Protokolls und verschiedener Routingalgorithmen wird auf der Netzwerkebene sichergestellt, dass jedes erhaltene Paket korrekt weitergeleitet wird. 
+
+\subsubsection{IP-Protokoll}
+Das IP-Protokoll wird auch umgangssprachlich das "`Internet-Protokoll"' genannt. Es ist das Protokoll auf das alle anderen Protokolle, wie TCP, UDP oder ICMP aufsetzen. Es beinhaltet keine Verbindungsmethoden, jedoch eine Paket-Struktur.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{ip}
+\caption{Aufbau eines IP-Pakets}
+\label{fig:ippaket}
+\end{figure}
+
+Jeder Computer im Internet hat eine Adresse mit der er eindeutig verknüpft ist, die \textit{IP-Adresse}. Diese IP-Adresse ist ein 4 Byte langes Feld, das zur besseren Lesbarkeit in vier, durch Punkte getrennte Dezimalzahlen von 0 bis 255 notiert wird. Also beispielsweise 243.155.5.56. Anhand dieser Adressierung ist es somit möglich, dass ein Nachrichtenaustausch, also die Kommunikation, von einer Seite der Erde auf die andere ohne große Mühe funktioniert. Dieser Nachrichtenaustausch erfolgt über Nachrichtenpakete, die verschiedenste Informationen, wie Absender, Empfänger und natürlich auch Daten enthalten.
+
+Wie in Abbildung~\ref{fig:ippaket} zu sehen ist, beinhaltet ein solches IP-Paket noch viel mehr Informationen auf die hier aber nicht eingegangen wird. Wichtig sind erst einmal nur die Adressen, also \textit{Destination Address} und \textit{Source Address}.
+
+\subsubsection{Routing-Protokolle}
+Die Routing-Protokolle ermöglichen den dynamischen Aufbau von Routing-Tabellen in jedem einzelnen Router (siehe Abschnitt~\ref{sec:router}). Die von den Protokollen genutzten Algorithmen lassen sich in zwei Klassen aufteilen.
+\begin{description}
+\item[Link-State-Protokoll] Bei diesem Algorithmus wird allen anderen Routern mitgeteilt, welche Nachbarn jeder einzelne Router hat. Somit kann jeder Router für sich aus den Informationen der anderen eine Topologie aufbauen und seine Routingtabelle danach erstellen.
+\item[Distance-Vector-Protokoll] Hier teilt jeder Router seinen Nachbarn mit, welche Router ihm bekannt sind und mit wie vielen Schritten diese erreicht werden können. Unter diese Art von Protokollen fallen auch die mit einem verbesserten Algorithmus versehenen Pfadvektor-Protokolle, wie das \textit{BGP} (Border Gateway Protocol).
+\end{description}
+In diese Klassen fallen nun verschiedene Protokolle, die die Router nutzen, um ihre Pakete möglichst schnell an sein Ziel zu weiterzuleiten.
+
+\subsubsection{ICMP}
+Dieses Protokoll wird für Kontrollzwecke genutzt. ICMP (\textit{Internet Control Management Protocol}) bietet Funktionalitäten, die für das Management von Verbindungen im Netzwerk nötig sind. So sendet ein Router dem Sender eines Paketes ein ICMP-Paket vom Typ "`Destination Unreachable"' und dem Code "`Host Unreachable"'\cite{rfc792icmp}, wenn der Empfänger, welcher im Header des IP-Paketes enthalten ist nicht in seinem Netzwerk existiert.
+
+Ein weiteres Beispiel für ICMP ist das Paket vom Typ "`Redirect"'\cite{rfc792icmp}. Dieses Paket wird von Routern benutzt, um Paketsendern aus dem eigenen Netzwerk mitzuteilen, dass dieser seine Pakete über einen anderen bestimmten Router schicken soll, da dies direkter zum Ziel führt.
+
+\subsection{Transportebene}
+Die Transportebene setzt direkt über der Netzwerkebene an. Die hier benutzten Protokolle bieten verschiedene Funktionalitäten an. Jedes hat spezielle Vorteile und Nachteile. Je nach Anwendungsbereich werden verschiedene Funktionen benötigt. Je nach Anwendungsbereich werden verschiedene Funktionen benötigt, die durch die folgenden Protokolle abgedeckt werden.
+
+\subsubsection{TCP}
+\label{sec:tcp}
+TCP ist ein verbindungsorientiertes Transportprotokoll. Verbindungsorientiert bedeutet, dass bei einer Kommunikation über dieses Protokoll eine Verbindung zwischen den beiden Endpunkten aufgebaut wird. TCP benutzt für den Aufbau einer solchen Verbindung ein Dreiwege-Handshake-Protokoll. Der Verbindungsaufbau wird demnach in drei Schritten vollzogen. In einem ersten Schritt meldet der Sender sich mit einem SYN-Paket (SYN=Syncronize) an. Dieses Paket wird vom Empfänger mit einem SYN/ACK-Pakete (ACK=Acknowledge) bestätigt. Diese Paket bestätigt der Sender wiederum mit einem eigenen ACK-Paket und die Verbindung ist eingerichtet.
+
+Neben dem Verbindungsstatus wird von TCP auch Zuverlässigkeit gewährleistet. Dies bedeutet, dass Pakete, welche über TCP gesendet werden auf jeden Fall beim Empfänger ankommen werden. Jedes erhaltene Paket muss vom Sender bestätigt werden. Zu diesem Zweck enthält das TCP-Paket eine Sequenznummer, welche es eindeutig beschreibt.
+
+Eine weiter Funktionalität von TCP ist Flusskontrolle. Diese bietet den Vorteil, dass eventuell ausgelastete Datenleitungen weniger stark belastet werden und somit eine gewisse Fairness gegenüber weiteren Datenverbindungen garantiert wird. Ebenso wird umgekehrt bei weniger Datenverkehr die Leitung voll ausgelastet.
+
+\subsubsection{UDP}
+Im Gegensatz zu TCP ist UDP verbindungslos. Das bedeutet, dass zum Start einer Kommunikation über UDP z.B. kein Handshake-Protokoll benötigt wird. Zuverlässigkeit wird von UDP nicht erbracht. Pakete, die auf dem Weg zum Empfänger verloren gehen werden nicht wiederholt gesendet. Dadurch erreicht man zwar einen, im Gegensatz zu TCP verzögerungsärmeren Datenaustausch, muss dabei aber in Kauf nehmen, dass bei einer verlustreichen Verbindung Pakete verloren gehen.
+
+UDP wird dort verwendet, wo ein solcher Datenverlust nicht schwerwiegend ist. Andererseits auch dort, wo die Applikationsebene entweder ebenfalls durch Wiederholung des Sendevorgangs selbst den Datenverlust bewältigt oder durch interne Algorithmen, je nach Anwendung anderweitig handhabt.
+
+Bei VoIP (\textit{Voice over IP}), also der Telefonie über das Internet, wird auf den Verlust von Datenpaketen durch verschiedene Mechanismen reagiert. Hier wird z.B. durch Wiederholung des letzten eingegangenen Paketes oder durch Interpolation zwischen dem letzten, vor dem Verlust eingegangenen Paket und dem nächsten nach dem Verlust eingegangen Paket unterschiedlich gut mit Paketverlusten umgehen\cite{lilialajmi}.
+\begin{table}[htb]
+ \centering
+ \begin{tabular}{lll}
+  \textbf{Protokoll} & \textbf{Vorteile} & \textbf{Nachteile} \\
+  \midrule
+  TCP & zuverlässig, fair & viel Verzögerung möglich \\
+  UDP & kaum Verzögerung & unzuverlässig, unfair \\
+  \midrule
+ \end{tabular}
+ \caption{TCP und UDP im Vergleich}
+ \label{tab:tcpudp}
+\end{table}
+
+Zusammenfassend lässt sich, gemäß Tabelle~\ref{tab:tcpudp} sagen, dass die Wahl eines geeigneten Transportprotokolls immer von den gewünschten Eigenschaften abhängt.
+
+\subsection{Applikationsebene}
+Auf der Transportebene baut die Applikationsebene auf. Dieser Ebene ist die, in der Abstraktion höchste Ebene. In ihr befinden sich nun die Protokolle, die vom Anwender direkt genutzt werden. Folgend werden ein paar Beispiele genannt.
+
+\subsubsection{HTTP}
+Das Protokoll, welches von vielen Anwendern üblicherweise genutzt wird ist das HTTP-Protokoll. HTTP (\textit{Hypertext Transfer Protocol}, definiert in RFC 2616\cite{rfc2616http}) wird mehrheitlich zur Darstellung von Internetseiten benutzt. Web-Server, also Rechner im Internet, die Internetseiten speichern und anbieten, geben ihre Daten über das HTTP-Protokoll an die anfordernden \textit{Browser} weiter. Der Browser ist ein Programm des Anwenders, welches die ankommenden Daten interpretiert und darstellt. HTTP kann weiterhin auch zum Dateitransfer genutzt werden, es ist aber nicht für eine solche Anwendung entwickelt worden. Diese Dateitransfers werden zumeist über ein speziell für diese Tätigkeit entwickeltes Protokoll namens FTP durchgeführt.
+
+\subsubsection{FTP}
+Das \textit{File Transfer Protocol} (RFC 959\cite{rfc959ftp}) ist speziell für den Transport von Dateien entwickelt worden. Mit Hilfe des FTP-Protokolls kann der Anwender sich auf einem FTP-Server einloggen und von dort Dateien herunter- bzw. heraufladen. Neben dem Transportdatenstrom gibt es noch einen Kontrolldatenstrom, der dazu da ist, Befehle an den FTP-Server zusenden und auch Kontrolldaten vom Server zu erhalten. Zwar lassen sich auch über HTTP-Server Dateien zum Herunterladen zur Verfügung stellen, die Handhabung und Effizienz des Navigierens innerhalb der Verzeichnisstruktur der Daten auf dem HTTP-Server ist jedoch nicht so gut wie über FTP. So lässt sich beispielsweise mittels eines Befehls "`chdir pfad/zum/verzeichnis"' das aktuelle Verzeichnis wechseln. Für einen solchen Wechsel über HTTP wären meist drei Mausklicks notwendig.
+
+\subsubsection{SSH}
+Über FTP und HTTP werden die Daten ohne Sicherheitsmechanismen übertragen. Eine Verschlüsselung ist in diesen Protokollen nicht vorgesehen. Für solche sicheren, passwortgeschützten Verbindungen wurde SSH (\textit{Secure Shell} RFC 4251\cite{rfc4251ssh}) entwickelt. Für die Sicherheit des SSH-Protokolls sorgen viele kryptographische Algorithmen, die Authentisierung und Verschlüsselung gewährleisten. SSH ist zuerst einmal entwickelt worden, um ein gesichertes Befehlsterminal auf einem entfernten Rechner zu öffnen. Aber insbesondere die Weiterentwicklung SSH2 erlaubt neben der gesicherten Terminalverbindung auch die Adaption an andere Programme. So setzt das Programm SCP auf SSH auf und ermöglicht einen Dateitransfer über das SSH-Protokoll, also einen verschlüsselten Transfer. Auch SFTP bietet eine gesicherte Alternative zu FTP, welche SSH benutzt.
+
+\subsubsection{DNS}
+\label{sec:dns}
+Die einzelnen Rechner des Internets sind, wie aus dem vorigem Abschnitt zu sehen, über IP-Adressen in nummerischer Form zu finden. Da diese nummerische Adressgebung für die Router sehr einfach, für den Menschen aber schwer zu handhaben sind, wurde das DNS-Protokoll entwickelt\cite{rfc1034dns1}\cite{rfc1035dns2}. Es ermöglicht eine eindeutige Zuordnung von alphanumerischen Adressen, also beispielsweise \texttt{www.iv.tu-berlin.de} zu IP-Adressen (hier: \texttt{130.149.16.12}). Jeder IP-Adresse kann also mindestens eine so genannte \textit{Domain-Adresse} zugeordnet werden. DNS heißt \textit{Domain Name System}.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{dns}
+\caption{Baumartige Struktur der DNS-Hierarchie}
+\label{fig:dns}
+\end{figure}
+
+Diese Namensauflösung, das heißt die Zuordnung eines Domain-Namens zu einer IP-Adresse wird im Internet von den DNS-Servern durchgeführt. Die erste Anfrage eines Benutzers zu der IP-Adresse einer Domain geht zuerst einmal eine Anfrage an den DNS-Server des Providers. Sollte der keinen Eintrag zu dieser Domain haben, sendet er eine Anfrage an einen der 13 DNS-Root-Server.
+
+Wie in Abbildung~\ref{fig:dns} zu sehen ist, ist dieser DNS-Root-Server der oberste Knoten eines Baumes - hier mit einem Punkt bezeichnet. Von dort aus wird nun rekursiv eine Anfrage gestartet. Der Domain-Name wird von rechts nach links aufgelöst, d.h. zuerst wird bei meinem Beispiel die \texttt{de}-Endung verfolgt, danach der Teil \texttt{tu-berlin} usw.. Bei jedem Schritt wird ein neuer DNS-Server nach der IP-Adresse gefragt. Sollte bei diesem Server kein Eintrag zu der Anfrage vorhanden sein, wird diese Anfrage an den nächsten zuständigen DNS-Server weitergeleitet. Also beispielsweise sendet der DNS-Root-Server die IP-Adresse des DNS-Servers der Domain \texttt{tu-berlin.de}. Dieser hat möglicherweise die IP-Adresse des gesuchten Web-Servers nicht eingetragen, sendet also nun die Anfrage weiter an den DNS-Server der Subdomain \texttt{iv}. Spätestens hier sollte ein Eintrag für den Web-Server (\texttt{www.iv.tu-berlin.de}) dieser Domain vorhanden sein. Diese nun ermittelte IP-Adresse wird nun an den DNS-Server des Providers zurück gesendet, der diese wiederum dem anfragenden Benutzer mitteilt.
+
+Die vermittelte Adresse kann der DNS-Server des Providers nun auch speichern. Dieses so genannte \textit{Caching} erlaubt eine schnellere Beantwortung der DNS-Anfragen. Sollte nun wieder eine Anfrage an den DNS-Server gehen, welche die Domain \url{www.iv.tu-berlin.de} aufgelöst haben möchte, so kann dies schnell über die nun gespeicherte IP-Adresse geschehen. Diese Cache-Einträge werden jedoch nach einer bestimmten Zeit, der TTL (Time-To-Live), wieder gelöscht, da es oftmals vorkommt, dass sich IP-Adressen ändern und so dann evtl. eine falsche Antwort kommen würde.
+
+Die zweite Methode ist die reversible Namensauflösung (\textit{Reverse Lookup}). Hierbei wird der umgekehrte Weg beschritten, nämlich die Zuordnung des Domainnamens zu einer bestimmten IP-Adresse. Hierzu wird auf jedem DNS-Server eine \textit{Reverse Lookup Tabelle} eingerichtet. Diese Tabelle enthält Einträge, nach denen jeder IP-Adresse im Subnetz des verwaltenden DNS-Servers ein Domainname zugeordnet werden kann.
+
+Jede Ebene der Referenzmodelle birgt Schwachstellen. Jedes System eines Netzwerks nutzt die Funktionen dieser Ebenen. Somit besteht die Möglichkeit, dass jedes System auch Teil eines Angriffs wird.
+
+\subsection{Angriffsziele}
+Nun muss überlegt werden, welche Ziele ein Angreifer im Netzwerk haben kann. Welches Ziel steuert er an? Warum möchte er gerade dieses Ziel angreifen? Ein Angriff hat auf unterschiedlichen Systemen auch unterschiedliche Auswirkungen, sowohl für das System selbst als auch für das Netzwerk, indem es integriert ist. Diese Arbeit differenziert Angriffe auf Router, Server und auf Endbenutzer.
+
+\subsubsection{Router}
+\label{sec:router}
+Router sind Schnittstellen zwischen verschiedenen Netzwerken, deren Aufgabe darin besteht den Nachrichtenaustausch zwischen den Netzwerken zu gewährleisten. Die \textit{Destination Address}, also Zieladresse von IP-Paketen werden von Routern benutzt. Sie regeln das Weitersenden von eingehenden IP-Paketen aufgrund einer Routingtabelle. Eine solche Routingtabelle enthält zu jeder Ziel-IP-Adresse eines Nachrichtenpakets eine zugehörige Schnittstelle.
+\begin{table}[htb]
+\centering
+\begin{tabular}{llll}
+Destination Network & Netmask & Router & Metric\\
+\midrule
+192.168.0.0 & 255.255.255.0 & 192.168.0.1 & 1\\
+245.133.2.0 & 255.255.255.0 & 245.133.2.1 & 1\\
+135.22.0.0 & 255.255.0.0 & 135.22.0.1 & 2\\
+135.22.0.0 & 255.255.0.0 & 135.22.1.1 & 3\\
+\midrule
+\end{tabular}
+\caption{Beispiel einer Routingtabelle}
+\label{tab:routingtabelle}
+\end{table}
+
+Wie in Tabelle~\ref{tab:routingtabelle} zu sehen ist, geschieht die Zuordnung anhand einer Maskierung der Zieladresse. Das bedeutet, dass die Ziel-IP-Adresse mit der Netzwerkmaske (Netmask) logisch mit UND verknüpft wird und das Ergebnis mit der linken Spalte (Destination Network) verglichen wird. Stimmt nun eine der Adressen mit dem Ergebnis der UND-Verknüpfung überein, so wird das Paket an den nächsten Router, der in der entsprechenden Zeile notiert ist weiter geschickt. Sollte es keine Übereinstimmungen geben wird das Paket verworfen.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{internetskizze}
+\caption{Grobe Skizzierung des Internets}
+\label{fig:internetskizze}
+\end{figure} 
+
+Möglich ist auch, dass es zu einer Adresse mehrere Wege gibt. Dann entscheidet der Wert der letzten Spalte, die sog. Metrik über den nächsten Router. Die Metrik beschreibt die Anzahl der Router, die auf dem Weg zum Ziel noch zu passieren sind. Je kleiner also dieser Wert ist, desto schneller wird das Paket vermeindlicherweise am Ziel ankommen.
+
+Wie in Abb.~\ref{fig:internetskizze} zu sehen ist, kann das Internet grob gesehen als Zusammenschluss von vielen Netzen durch Router gesehen werden.
+
+\subsubsection{Server}
+Server sind in den einzelnen Netzwerken integriert. Server bieten Dienste an, die von vielen oder gar allen Nutzern im Internet abgerufen werden können. Diese Dienste sind z.B. HTTP, FTP oder Mail. Ein Webserver beispielsweise bietet Webseiten, die über einen Browser betrachtet werden können. Ein Mailserver bietet dagegen Dienste an, über die sich eMails verschicken und empfangen lassen.
+
+Der Begriff "`Client"' bezeichnet den Nutzer der verschiedenen, von Servern angebotenen Dienste, also z.B. denjenigen, der den Browser bedient und damit Webinhalte der Webserver für sich nutzt.
+
+\subsubsection{Endbenutzer}
+Der Endbenutzer ist der Nutzer des Internets, der z.B. als Client bei einem Server Dienste, wie HTTP nutzt. Dieser sitzt zumeist an einem eigenen PC. Dieses 
+
+\subsection{Der Angriff}
+Die verschiedenen Ziele der Angreifer sind somit definiert. Nun stellt sich die Frage, was passiert, wenn das eine oder das andere ausgewählte Ziel geschädigt wird und was ein potentieller Angreifer mit einer solchen Schädigung erreichen möchte. Darauf wird nun im Einzelnen eingegangen:
+\begin{enumerate}
+ \item \textbf{Router}: Ein Router ist, wie in Abb:~\ref{fig:internetskizze} zu sehen ist, ein empfindliches Bindeglied zwischen den Netzwerken. Fällt einer aus ist es eventuell noch nicht auffällig, sobald aber mehrere Router ihren Dienst versagen kann dies schnell zu größeren Problemen führen. Wenn eine bestimmte Route über keinen der Router mehr zu erreichen ist, fällt der gesamte Datenverkehr für diese Strecke aus. Jeder erdenkliche Dienst kann dann nicht mehr genutzt werden, da die Pakete, egal welcher Art, unterwegs auf jeden Fall verloren gehen.
+
+ \item \textbf{Server}: Bei Servern ist die Situation nicht ganz so kritisch aber je nach Auftrag des Servers nicht minder wichtig. Der Ausfall eines oder mehrerer Server beeinträchtigt nicht den gesamten Verkehr im Internet, jedoch natürlich den Verkehr, der auf die Server führt.
+
+So können z.B. Störungen von Suchmaschinen-Servern dazu führen, dass die eine oder andere Suchmaschine nicht mehr zu erreichen ist. Dies könnte beispielsweise eine kriminelle Handlung eines Konkurrenten sein, der seine eigene Seite dadurch bevorteilen möchte. Andererseits könnte ein Bank-Server in die Hände eines Kriminellen geraten, der dann Zugriff auf die Konten hat.
+
+ \item \textbf{Endbenutzer}: Der Endbenutzer ist zwar das kleinste aber auch das am wenigsten abgesicherte Ziel eines Angriffs. Die großen Systeme der Router und Server sind professionell überwacht, während der kleine Anwender als Endbenutzer zumeist wenig Kenntnisse von Netzwerken und deren potentiellen Gefahren hat. Diese Rechner werden zumeist mit Würmern und Viren angegriffen, die dann verschiedene Dinge auslösen.
+
+Die Angriffe auf Endbenutzer sind zumeist noch die harmlosesten, da zum einen die Störung eines einzelnen Rechners im Internet keine sonderlichen Auswirkungen hat und zum anderen bei einzelnen Benutzern nicht viel zu erreichen ist. Bekannt sind hier eher Schadprogramme, die z.B. die Daten des Benutzers löschen oder seine Kontodaten ausspionieren.
+\end{enumerate}
+Oftmals werden solche Angriffe auf Server und Endbenutzer dazu genutzt um auf Schwachstellen aufmerksam zu machen. So genannte \textit{Hacker} versuchen mit den ihnen zur Verfügung stehenden Mitteln in die Rechner einzudringen und oftmals harmlose Spuren zu hinterlassen, die eher lästig als gefährlich sind.
+
+Jedoch ist jegliche Art von Angriff als "`unerwünscht"' einzustufen, da jeder die Möglichkeit aufzeigt, wo und auf welche Art und Weise auch gefährliche Angriffe vollzogen werden können. Es gibt Angriffe von außen, also solche, bei denen der Angreifer nicht im eigenen Netzwerk sitzt. Demnach gibt es dann auch noch Angriffe von innen, die prinzipiell gefährlicher sein können, da die meisten Abwehrmechanismen gegen externe Angriffe wirken. Intern lässt sich jedoch jegliche Manipulation leichter nach verfolgen und "`Gefahrenherde"' sind schneller erkannt und können bekämpft werden, da der Administrator auf jeden Router, Server und Endrechner Zugriff hat. Dieser Zugriff ermöglicht die Auswertung verschiedenster Log-Dateien und somit das Nach verfolgen aller im Netzwerk gesendeten Pakete.
+
+Zusätzlich lassen sich Angriffe physischer oder virtueller Art unterscheiden. Verschiedenste Bedrohungen für Netzwerke, seien es interne Netzwerke oder das Internet werden im folgenden Abschnitt nun erläutert.
+
+\section{Bedrohungen}
+Der folgende Abschnitt beschreibt Angriffe auf Router, Server und Endbenutzer und zeigt, was bei welchen Systemen zu Problemen führen kann und welche Auswirkungen dies haben könnte.
+
+\subsection{(Distributed) Denial Of Service}
+\label{sec:ddos}
+Denial Of Service (abgekürzt: DoS) ist eine Variante eines Angriffs, die im Grunde jedes Computersystem lahm legen kann. Somit können damit Server, Router und Endbenutzer gleichermaßen angegriffen werden. DoS bedeutet übersetzt etwa "`außer Betrieb setzen"'. Grob gesagt wird dieses Versagen durch eine Flut von Paketen erzeugt, die an die jeweilige Adresse des anzugreifenden Systems geschickt werden. Diese Flut bewirkt dann eine Belastung des Systems, welche im schlimmsten Fall zu einem Absturz führt. Im weniger brisanten Fall wird nur eine bestimmte Komponente des Systems lahm gelegt. DoS kann aber nicht nur durch Überlast geschehen, sondern auch auf Implementierungsfehlern basieren. Das heißt, dass durch Fehler im Programmcode beispielsweise der Serveranwendung gezielt gegen diese vorgegangen werden kann, was dann z.B. zum Absturz der jeweiligen Anwendung führen kann.
+
+Man kann das Ziel eines solchen Angriffs grob in vier Punkte unterteilen:
+\begin{enumerate}
+ \item Absturz eines Systems
+ \item Verhindern des Datenverkehrs zwischen zwei Systemen
+ \item Belastung eines Netzwerks zur Verlangsamung der Geschwindigkeit und Verschlechterung der Produktivität
+ \item Blockierung eines Systems. Gefährlicher als ein Absturz, da kein Neustart erfolgt
+\end{enumerate}
+
+Die Überflutung ist natürlich um so wirkungsvoller, je mehr Pakete bei dem "`Opfer"' ankommen. Hier gewinnt der Zusatz \textit{Distributed}, also \textit{verteilt}, an Bedeutung. Durch die Involvierung vieler, zumeist nichtsahnender Internetnutzer werden die Flut-Pakete von vielen PCs gleichzeitig zum Opfer geschickt. Dies lässt sich z.B. durch Trojaner (siehe Abschnitt~\ref{sec:trojaner}) bewirken, durch die die Kontrolle eines fremden PCs möglich ist. Durch diese Fremdkontrolle gelingt es dem Angreifer unbemerkt viele Pakete ans Ziel zu bringen. Unbemerkt in dem Sinn, dass der Absender nicht Angreifer ist, sondern mehrere unschuldige Dritte diesen Angriff durchführen.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{dos}
+\caption{Anzahl der DoS-Angriffe - Quelle: Symantec Band VIII\cite{symantec}}
+\label{fig:dos}
+\end{figure} 
+Die Anzahl der DoS-Angriffe hat vor allem seit Anfang 2005 stark zugenommen. So hat sich die Anzahl der durchschnittlichen Angriffe pro Tag von ca. 200 auf ca. 1000 erhöht.
+
+Durch diese DoS-Methode können auch Router angegriffen werden und deren Belastungsgrenze bis aufs Äußerste ausgereizt werden. Ohne Schutzmechanismen wäre auch ein Router schnell mit so vielen Paketen überfordert, bzw. würde sehr viele wichtige Pakete, die ihn passieren wegen Pufferüberlaufs verwerfen. Das würde das Internet im Ganzen blockieren, da nun die Sender immer und immer wieder versuchen werden ihre TCP-Pakete an den Empfänger zu senden, jedoch beim Router scheitern. Wenn nun auch noch mehrere Router betroffen sind besteht auch nicht mehr die Möglichkeit einen anderen Weg zu suchen. Ein solcher Angriff auf Router ist sicher der effektivste aber zugleich auch schwierigste, da die Router der heutigen Generation sehr spezialisierte Systeme sind, die diese DoS-Attacken erkennen und bekämpfen können.
+%
+% !!!!!!!!!!!! WIEEEEEEEEEEEEEEEEEE BEKÄMPFEN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%
+
+Im folgenden werden nun ausschnittsweise verschiedene Varianten der DoS-Attacken erläutert.
+
+\subsubsection{SYN-Flooding/Land}
+\label{sec:synflood}
+Diese Methode nutzt den Verbindungsstatus einer TCP-Verbindung aus. Beim Aufbau einer solchen TCP-Verbindung wird, wie in Abschnitt\ref{sec:tcp} erwähnt, ein Handshake-Mechanismus verwendet. Dieser kann nun gezielt zum Angriff genutzt werden.
+
+Die \textit{Land-Attacke} realisiert dies nun, indem sie das SYN-Paket des Senders mit einer falschen Absenderadresse versieht. Das führt nun dazu, dass der Empfänger sein SYN/ACK-Paket an die falsche Adresse sendet und keine Antwort erhält.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{handshake}
+\caption{Handshake vor der TCP-Verbindung}
+\label{fig:handshake}
+\end{figure}
+Das wiederum führt dazu, dass der Empfänger immer wieder versucht sein SYN/ACK-Paket zu senden, jedoch keine Antwort erhält. Dies geschieht so lange bis ein Timeout diese Versuche abbricht. Der Sender, also der Angreifer wird aber nicht nur ein SYN-Paket schicken, sondern gleich eine ganze Reihe von solchen Paketen.
+
+\subsubsection{Ping of Death}
+Diese Variante ist eine der einfachsten Möglichkeiten eines DoS-Angriffs. Hierbei wird die Fragmentierung von TCP ausgenutzt. Die Maximale Paketgröße eines TCP-Paketes ist 65.535 Byte. Je nach Einstellung der Internetverbindung werden TCP Pakete fragmentiert, das heißt in mehrere kleinere Pakete unterteilt und beim Empfänger wieder zusammengesetzt.
+
+Ein Offset-Wert bestimmt hierbei wann welches Paket anfängt. Durch Manipulation dieses Wertes des letzten fragmentierten Paketes wird erreicht, dass das gesamte Paket die maximale Größe überschreitet. Wenn die zusammengesetzte Paketgröße die Größe von 65.535 Byte übersteigt gibt es einen Puffer-Überlauf und im ungünstigsten Fall einen Absturz des empfangenden Rechners. Diese Lücke wurde jedoch mittlerweile bei nahezu allen gängigen Betriebssystemen geschlossen.
+
+Ein ICMP-Echo-Requests wäre die einfachste Variante eines solchen Paketes. Mit einem \textit{ping}-Befehl können solche ICMP-Nachrichten versendet werden. Allerdings muss hierzu das reguläre \textit{ping} abgeändert werden, da in der offiziellen Version die fehlerhafte Konstruktion eines solchen Paketes nicht gestattet ist.
+
+\subsubsection{Smurf}
+Bei einem Smurf-Angriff werden vom Angreifer sehr viele ICMP-Pakete an die Broadcast-Adresse eines Netzwerk geschickt, so dass jeder Rechner dieses Netzwerks diese Pakete erhält.
+
+Der Angreifer tarnt seine Pakete nicht mit einer unbekannten Adresse sondern gibt als Absenderadresse die Adresse des Opfers an. Somit werden nun alle Antwortpakete dieses Broadcast-Netzwerks an das Opfer geschickt. Sollten also beispielsweise 1000 Rechner in diesem Netzwerk antworten und der Angreifer hat 1000 Pakete geschickt erhält das Opfer $1000 * 1000 = 1.000.000$ Antwort-Paket. Dadurch wird die Kapazität des Opfers voll ausgeschöpft und dieser kann nicht mehr andere Datentransfers durchführen.
+
+\subsubsection{Teardrop}
+Wie beim \textit{Ping of Death} nutzt auch diese Methode die Fragmentierung von großen TCP-Paketen aus. Jedoch wird hierbei keine Überlänge der Pakete generiert, sondern die Fragmente überlappen sich gegenseitig, so dass das Betriebssystem des angegriffenen Rechners mehr Ressources zum Zusammensetzen der Pakete belegt als es verkraften kann. Die Folge ist der Absturz des Systems.
+
+Um einen DDoS-Angriffe starten zu können, müssen viele Rechner unter die Kontrolle des Angreifers gebracht werden. Um diese Kontrolle zu erreichen, werden Programme entwickelt. Diese Programme werden über Würmer oder Trojaner verbreitet. Die Existenz eines solchen Trojaners auf einem PC kann den Zugriff auf diesen ermöglichen. 
+
+\subsection{Trojaner}
+\label{sec:trojaner}
+Trojaner sind Programme, die zumeist über Dateianhänge in eMails verbreitet werden. Sie haben meist "`harmlos"' klingende Namen. Diese Programme enthalten jedoch schädliche Komponenten. Der Begriff \textit{Trojaner} wurde aus der Mythologie des \textit{Tronjanischen Pferdes} übernommen.
+
+\subsection{Bots}
+\label{sec:bots}
+ Mit Trojanern ist es möglich, den infizierten PC zu einem Bot werden zu lassen (Bots: Abkürzung für das englische Wort für Roboter "`robots"'). Bots sind demnach infizierte PCs, die mit Hilfe der Trojaner dazu veranlassen werden können, bestimmte Dinge zu tun. Zumeist werden solche Bots dann genutzt, um den PC fernzusteuern. Sie können beispielsweise genutzt werden um DoS-Attacken (vgl. Abschnitt~\ref{sec:ddos}) auszuführen. Sie sind in der Lage viele Pakete zu generieren und abzuschicken.
+
+Trojaner können auf Servern und Endbenutzersystemen ausgeführt werden und diese dann fernsteuern. Zumeist werden hier aber wohl die Systeme der Endbenutzer benutzt, da diese noch immer am wenigsten abgesichert sind und sich daher bestens für eine solche Infizierung und anschließende Fernsteuerung nutzen lassen.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{botnet}
+\caption{Darstellung eines typischen Botnetzwerks}
+\label{fig:botnet}
+\end{figure}
+
+Die Fernsteuerung läuft in der Regel über ein IRC-Netzwerk. IRC (\textit{Internet Relay Chat}) ist ein Protokoll zur textuellen Kommunikation, dem sogenannten \textit{Chat}. Ein IRC-Server besitzt mehrere Chaträume, sog. \textit{Channels}, denen IRC-Clients beitreten können. Innerhalb eines Chatraums können dann beliebige Textnachrichten ausgetauscht werden. Diese Prinzip machen sich nun Angreifer zunutze. Jeder Bot tritt einem bestimmten, vom Angreifer gewählten Chatraum bei. Somit besitzt der Angreifer die Möglichkeit, seinen Bots mittels Textnachrichten Befehle zu erteilten, die beispielsweise einen SYN-Flood Angriff einleiten.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{bots}
+\caption{Anzahl der Bots - Quelle: Symantec Band VIII\cite{symantec}}
+\label{fig:bots}
+\end{figure}
+
+Die Anzahl der Bots ist in dem Zeitraum von Anfang 2004 bis Anfang 2005 gestiegen (siehe Abbildung~\ref{fig:bots}). Die Anzahl der Bots und die Anzahl der DoS-Angriffe hängen wohl zusammen, denn solche Bots eignen sich gut dafür verteilte DoS durchzuführen, d.h. ein so genanntes Bot-Netzwerk aufzubauen, welches dann gemeinsam mehrere PC dazu missbraucht ein ausgesuchtes anderes System im Internet, sei es einen Server, einen Router oder einen anderer Endbenutzer zu attackieren.
+
+\subsection{Würmer}
+Würmer sind eigenständige Programme, die über Lücken im Betriebssystem auf einen Rechner gelangen können. Diese Lücken entstehen durch offene Ports, d.h. durch Schnittstellen im Betriebssystem, die für bestimmte Dienst genutzt werden. Auch Würmer können so programmiert sein, dass sie dem Entwickler eine Fernkontrolle ermöglichen. 
+
+\subsection{Viren}
+Viren sind kleine Programmstücke. Sie können sowohl in einer Datei oder im Speicher befinden. Viren sind nicht eigenständig, benötigen immer ein Medium, welches sie "`infizieren"'.
+ 
+Viren sind in der Lage sich selbst zu verbreiten, indem sie sich beispielsweise über das Adressbuch des "`befallenen"' PCs an viele weitere PCs per eMail verschicken.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{viren}
+\caption{Statistik zum Virenzuwachs - Quelle: Symantec Band VIII\cite{symantec}}
+\label{fig:viren}
+\end{figure}
+
+Die Zahl der Viren hat sich, wie in Abbildung~\ref{fig:viren} zu sehen ist, innerhalb von 2 Jahren, von Januar 2003 bis Januar 2005 verzehnfacht. 
+
+Hierbei hat sich die Anzahl der Virenfamilien aber nicht merklich verändert. Viren werden aufgrund ihrer Struktur und arbeitsweise in verschiedene Klassen, sogenannte Virenfamilien aufgeteilt. Diese Anzahl der Virenfamilien schwankt um einen Wert von ca. 160. Das bedeutet, dass die Viren nur dadurch vermehrt auftreten, dass der Virencode leicht abgeändert wird, so dass Virenscanner ihn nicht mehr erkennen. So müssen Virenscanner immer wieder aktualisiert werden und die ständigen Variationen in Ihre Datenbanken aufnehmen.
+
+Viren, Würmer und Trojaner könnne befallene Rechner schädigen, indem sie beispielsweise bestimmte Verzeichnisse löschen. Somit kann ein irreparabler Schaden angerichtet werden. Manchmal belästigen solche Programme auch nur den Nutzer, wie z.B. durch das Herunterfahren des Systems. Diverse Sicherheitsmechanismen, wie Dateirechte und Firewalls (siehe Abschnitt~\ref{sec:firewall}) oder Antivirenprogramme (Abschnitt~\ref{sec:antiviren}) gewähren Schutz. Jedoch gibt es immer wieder Lücken, die solche Schutzmaßnahmen unwirksam machen.
+
+\subsection{Bedrohungen mittels des DNS-Protokolls}
+Das DNS-Protokoll (siehe Abschnitt~\ref{sec:dns}) ist für die Vereinfachung der Navigation durch die Vielzahl der Server weltweit ein sehr wichtiges Protokoll. Sollte dieses ausfallen oder anderweitig durch einen Angriff gestört sein, so lassen sich, je nach Ausmaß des Angriffs viele Server nicht mehr über ihre Domain-Namen erreichen. Die Server sind zwar intakt und auch zu erreichen, jedoch nur direkt über ihre IP-Adresse. So ließe sich \texttt{www.iv.tu-berlin.de} nur noch über \texttt{130.149.16.12} erreichen.
+
+Die Bedeutung des DNS-Protokolls führt auch zu indirekten Angriffsmöglichkeiten. Durch Methoden, die die Funktionalität des DNS-Dienstes ausnutzen, lassen sich beispielsweise falsche Einträge in DNS-Servern platzieren. Diese Einträge können zur Folge haben, dass Domainnamen falsch aufgelöst werden.
+
+\subsubsection{Cache Poisoning}
+Beim \textit{Cache Poisoning} wird ein anzugreifender DNS-Server so manipuliert, dass er auf eine Anfrage an einen DNS-Root-Server eine falsche Antwort erhält. Das DNS-Protokoll nutzt als alleinige Authentisierung eine 16-Bit große ID, die \textit{Transaction-ID}. Sollte es dem Angreifer gelingen diese ID zu erraten, dann kann er das Antwortpaket fälschen.
+
+Die ID ist aber nicht alleine nötig, um falsche Pakete zu senden. Der UDP-Port des DNS-Servers ist ebenso nötig. Theoretisch wäre es möglich, dass jede einzelne Anfrage über einen anderen Port gesendet wird. Dies wird aber in den aktuellen BIND Versionen nicht praktiziert (BIND ist der DNS-Server, welcher am häufigsten verwendet wird - Berkley Internet Name Domain).
+
+So ist es also möglich, dass der Angreifer mittels einens eigenen DNS-Servers manipulieren kann. Hat er also Kontrolle über einen DNS-Server, so kann er an den zu attackierenden DNS-Server eine Anfrage schicken, die die Auflösung des Domainnamens eines im Netz des Angreifers befindlichen Hosts enthält. Der angfragte DNS-Server wird dann wiederum eine Anfrage an den DNS-Server des Angreifer schicken, da der angefragte Host auf diesem Server eingetragen ist. Dieser Anfrage kann der Angreifer nun den von BIND benutzen Source-Port entnehmen und ihn für seine gefälschten Antworten benutzen.
+
+Das letzte nötige Detail ist die Source-IP-Adresse, d.h. die IP-Adresse des zuständigen Nameservers. Diese ist bekannt und es ist kein Problem mehr Antwort-Pakete zu erstellen, welche die korrekte Source-IP-Adresse, den korrekten Source-Port und eine generierte ID, sowie die gefälschte Antwort des Nameservers enthalten.
+
+Eine besonders effiziente Art des \textit{Spoofings}, d.h. des Versendens von Paketen mit falschem Absender und manipuliertem Inhalt, ist die \textit{Geburtstags-Attacke} (Birthday-Attack), benannt nach dem Geburtstagsparadoxon:
+\begin{quotation}
+\textsc{Die Wahrscheinlichkeit, dass aus einer Gruppe von 23 Leuten mindestens zwei am gleichen Tag Geburtstag haben, ist größer als $0,5$.}
+\end{quotation}
+Dieses mathematische Phänomen nutzt nun der Angreifer. Hierbei wird die Fragestellung umformuliert. Bei der Geburtstags-Attacke ist nun die Frage, wieviele Anfragen und Antworten müssen gesendet werden, damit mit einer Wahrscheinlichkeit von über $0,5$ mindestens eine Antwort und eine Anfrage dieselbe  \textit{Transaction-ID} besitzen? Die Antwort auf diese Frage liefert folgende Formel:
+$$P = 1 - (1 - \frac{1}{t})^{\frac{n * (n-1)}{2}}$$
+Laut dieser Formel\cite{stewart} lässt sich die Zahl der Pakete bestimmen. Es sind $n = 302$ Pakete, die nötig sind, um bei $t = 65535$ möglichen IDs eine Wahrscheinlichkeit von $P > 0,5$ zu erhalten.
+
+Um nun seine Attacke mit möglichst großer Wahrscheinlichkeit zu starten, sendet der Angreifer nun also 302 Anfragen an den anzugreifenden DNS-Server. Gleichzeitig werden ebensoviele manipulierte Antworten gesendet und der eigentlich zuständige Nameserver mit einer DoS-Attacke blockiert, so dass er nicht so schnell die korrekte IP-Adresse liefern kann. Jede dieser manipulierten Antwort-Pakete enthält eine andere generierte ID. Somit erreicht der Angreifer sein Ziel mit einer Wahrscheinlichkeit von etwa $50\%$. Sollte nämlich nun die ID der gefäschten Antwort mit der, der erwarteten Antwort übereinstimmen, so wird die Antwort für "`wahr"' empfunden und ein Eintrag im DNS-Cache vorgenommen, der die falsche IP-Adresse enthält. Dies hält nun solange an, bis der Timer abläuft, der in dem manipulierten Antwortpaket als TTL-Feld (Time-To-Live) gegeben war.
+
+Beim einfachen DNS Spoofing, würde die gleiche Paketanzahl zu einer Wahrscheinlichkeit von $\frac{302}{65535} = 0,0046$ für einen erfolgreichen Angriff führen. Bei einfachen Spoofing werden auf eine einzelne Anfrage mehrere Antworten mit unterschiedlichen IDs gesendet. Wie aber zu sehen ist, ist diese Methode weit ineffizienter als die Geburtstags-Attacke.
+
+Wenn nun ein Client eine Anfrage an den DNS-Server sendet und nach der IP-Adresse der soeben manipulierten Domain fragt, so wird er eine falsche Antwort bekommen und auf einen anderen Server geleitet, als gewünscht war.
+
+\subsubsection{DNS Amplification}
+Bei dieser Variante wird nicht der DNS-Server als eigentliches Ziel benutzt, sondern als Angreifer mißbraucht. Es wird ausgenutzt, dass bei DNS auf kurze Anfragepakete (60 Byte) lange Antwortpakete folgen. Diese können bis zu 4000 Byte groß sein\cite{dnsamplification}, so dass der sogenannte Verstärkungsfaktor mit $\frac{4000}{60}\approx67$ ziemlich hoch liegt. Somit ist es möglich, durch gezielte Anfragen einen DNS-Server dazu zu veranlassen, Antwortpakete an einen anzugreifenden Dritten zu senden. Dazu wird in denen den Anfragepaketen die IP-Adresse gespooft.
+
+\subsubsection{Phase Space Analysis Spoofing}
+Die Geburtstags-Attacke kann mit einer Analyse der generierten Transaction-IDs noch verbessert werden. Da die IDs mit Pseudo Zufallsgeneratoren erzeugt werden, besteht die Möglichkeit für den Angreifer, die Schwächen dieser Generatoren zu nutzen. Bei der Analyse einer Reihe von generierten IDs ist zu sehen, dass etwa bei BIND 8.4.3 ein großer Bereich von Zahlen gar nicht generiert wird\cite{stewart}. So kann durch Ausschluss dieser Zahlen die Wahrscheinlichkeit des korrekten Ratens einer ID nochmals erhöht werden.
+
+Neuere BIND Versionen und andere DNS-Server, wie \textit{djbdns}\footnote{\url{http://cr.yp.to/djbdns.html}}, benutzen bessere Generatoren für ihre Zufallszahlen\cite{stewart}, sind dadurch aber nicht geschützt, auch wenn die Wahrscheinlichkeit eines erfolgreichen ID-Ratens sinkt.
+
+Die falsche Auflösung von Domainnamen ist eine Bedrohung über das DNS-Protokoll. Diese Protokoll befindet sich in der Applikationsebene. Auf der Netzwerkebene besteht die Möglichkeit über das Routing, Pakete falsch zu vermitteln.  
+
+\subsection{Bedrohungen über Routing Protokolle}
+Bei Angriffen auf das Routing können Router so getäuscht werden, dass sie falsche Routinginformationen in ihre Routing-Tabelle aufnehmen. Diese falschen Routinginformationen können Angreifer nutzen. Beispielsweise könnte erreicht werden, dass alle Pakete, die eigentlich zu Router XY gelangen sollten, beim Angreifer ankommen. So kann er spionieren und sogar fälschen, d.h. die Daten verändert an ihr eigentliches Ziel weiterleiten. Diese Methode wird im allgemeinen als \textbf{Man in the Middle}-Methode bezeichnet.
+
+\subsubsection{ARP}
+Die einfachste Methode bietet ARP. Es ist zwar nicht direkt ein Routing-Protokoll hilft aber dabei, dass Pakete ihren Empfänger erreichen. Das \textit{Address Resolution Protocol} ist dazu da, IP-Adressen MAC-Adressen zuzuweisen. Jede IP-Adresse hat eine eindeutige MAC-Adresse, welche für die Adressierung im Link-Layer wichtig ist. Mit ARP kann der Angreifer einfach eine Anfrage eines Senders nach der MAC-Adresse einer bestimmten IP mit seiner eigenen MAC-Adresse beantworten. Die IP bleibt zwar die gleiche, aber auf dem darunter liegenden Link-Layer (z.B. Ethernet) ist die Adresse eine falsche. So bekommt nun der Angreifer alle Pakete gesendet 
+
+\subsubsection{RIP}
+Das erste weit verbreitet eingesetzte Routing-Protokoll war RIP. Es arbeitet so, dass jeder der Router seine ihm bekannten Routen und deren Metrik, also die Anzahl der Hops bis zu einem bestimmten Ziel an alle Router seiner Domain schickt. Es handelt sich bei RIP um ein \textit{Distance-Vector-Protocol}. Die Domain ist im Falle von RIP v1 eine Broadcast-Domain, im Falle von RIP v2 eine Multicast-Domain. So kann einen Angreifer einfach die Route zu seinem Rechner mit einer sehr kleinen Metrik versehen und schon werden alle Pakete an ihn geschickt. Dieses Protokoll findet allerdings kaum noch Anwendung.
+
+\subsubsection{EIGRP}
+Heute wird eher das EIGRP benutzt (Enhanced Interior Gateway Routing Protocol). Wie der Name schon preisgibt, handelt es sich um ein internes Protokoll, welches für die Verständigung der Router innerhalb eines autonomen Systems benutzt wird. Ein autonomes System bezeichnet ein Teilnetzwerk, was unter einer administrativen Verwaltung steht. Es ist ein Cisco\texttrademark-eigenes Protokoll, eine Erweiterung von IGRP und fällt auch in die Klasse der \textit{Distance-Vector-Protocols}. Die Routingentscheidung wird nun aber nicht mehr nur durch die Anzahl der Hops, sondern auch über Parameter, wie Paketlaufzeit, Bandbreite, Verfügbarkeit und Auslastung von Verbindungen bestimmt\cite{routing}. Genau wie RIP 2 arbeitet EIGRP über Multicast, d.h. auch bei EIGRP kann der Angreifer mithören und auch selbst konstruierte Routinginformationen an einen Router senden. Dieser sorgt dann dafür, dass alle anderen auch dieses Update durchführen.
+
+Wie RIP v2 bietet auch EIGRP einen MD5-Hash-Algorithmus zur Wahrung der Integrität von Paketen (siehe Abschnitt~\ref{sec:schluessel}. Es verhindert jedoch nicht, dass früher kopierte Update-Pakete zu einem späteren Zeitpunkt nochmal vom Angreifer gesendet werden können und das Routing beeinträchtigen, falls dieses Update nicht mehr gültig ist.
+
+\subsubsection{Protokollunabhängig}
+Auch das Einspeisen von Routinginformationen zu nicht zugewiesenen Adressblöcken stellt ein Problem dar. So sind von der IANA (\textit{Internet Assigned Numbers Authority}) Bereiche von IP-Adressen als "`nicht vergeben"' deklariert. Solche Adressen werden von DoS-Angreifern gerne als Source-IP-Adresse in den \textit{gespooften} Paketen verwendet. Wenn das Angriffsziel nun von einer DoS-Attacke getroffen wird und Antworten an diese "`nicht vergebene"' Adresse zurück schickt, so sind die Router meist so konfiguriert, dass sie Pakete mit einer solchen Ziel-Adresse verwerfen. Sollte aber nun in der Routingtabelle ein Eintrag zu einer solchen, eigentlich nicht vergebenen Adresse existieren, so würden die Pakete nicht verworfen. Diese Antwortpakete könnten nun an einen Dritten geleitet werden und somit eine weitere DoS-Attacke auslösen.
+
+Ein weiteres Problem auch die "`Monokultur"' im Bereich der Routerkonstrukteure. Cis\-co\texttrademark~besitzt einen Markanteil von ca. $75\%$\cite{cisco} im Bereich Internet Backbone Routing. Durch ein einzelnes Problem bei der Software der Router von Cisco\texttrademark~ist es für Angreifer möglich gleich große Teile des Internets zu gefährden. Beispiele für Probleme auf Cisco Routern finden sich auf \textit{Security Focus}\footnote{\url{http://www.securityfocus.com}}. So ließ sich mit einfachen Mitteln Zugang zu Cisco Router erreichen\cite{ciscoexploit} oder über geschickte Ausnutzung des SNMP-Protokolls(\textit{Simple Network Managment Protocol}) Datenverkehr über gewünschte eigene Routen umleiten\cite{ciscosnmp}.
+
+Insgesamt bilden Angriffe auf das Routing eine Gefahr auf unterster Ebene. Durch solche Angriffe lassen sich ganze Firmennetzwerke in ihrem Betrieb beeinträchtigen. Ebenso groß ist die Gefahr von Spionage und Fälschung. So können über manipulierte Routen Datenpakete an Dritte geschickt werden, kopiert und auch verändert werden, wenn Schutzmechanismen, wie z.B. MD5-Verschlüsselung nicht genutzt werden. 
+
+Unterhalb der Netzwerkebene, in der die Funktionalität des Routings enthalten ist, existiert nur noch die Host-to-Network Ebene. Auch auf dieser Ebene können Netzwerkstrukturen bedroht werden.
+
+\subsection{Bedrohungen der Physikalischen Infrastruktur}
+Neben den virtuellen Angriffen, d.h. den Angriffen über entfernte Rechner auf die wichtigen Protokolle, gibt es aber natürlich auch Angriffe physikalischer Natur. Sei es durch mutwillige Zerstörung durch Kriege oder Anschläge oder durch natürliche Einflüsse, wie Erdbeben oder ähnliches.
+
+Das Internet als Ganzes ist vom Grundkonzept her sehr robust. Ausfälle einzelner Knoten lassen sich durch die Flexibilität des Netzes schnell ausgleichen. So werden Routerausfälle von den Nachbarrouter schnell erkannt, die diese Information dann über die Routingprotokolle bekannt geben. Nicht zu verachten sind jedoch gewisse Schnittstellen und Leitungen, deren lokale Nähe zueinander zu einem Problem werden können. So enden beispielsweise weite Teile der transatlantischen Datenverbindungen in den USA im Bereich New Jersey und Rhode Island. Alleine vier Kabel landen in Manasquan (New Jersey). Weitere in New York, Brookhaven, Bellport oder Green Hill\cite{icpc}.
+
+Eine Katastrophe in diesem Bereich der Vereinigten Staaten, die die Datenkabel treffen würde, könnte die Datenverbindungen zwischen Europa und den USA sehr stark beeinträchtigen. Es existieren zwar auch Leitungen von Amerika über Asien nach Europa, diese Kapazitäten sind jedoch nur unzureichend\cite{Quelle!}. 
+%% !!!!!!!!! QUELLLLLLLLLLEEEEEEEEEE!!!
+Ein Ausbau dieser Verbindungen zwischen Asien und Europa könnte auch für Entlastung der Verbindung USA - Europa sorgen.
+
+Ein weiterer Punkt sind die Peering-Points und Internethubs, die ebenfalls zentrale Knoten im Internet darstellen. Über diese Knoten tauschen die großen Provider ihre Daten aus, so dass sehr viel Verkehr über diese Systeme geht.
+Folgend werden ein paar zentrale Peering-Points genannt.
+\begin{description}
+ \item[DE-CIX] Deutscher Commercial Internet Exchange. An diesen Netzknoten sind zur Zeit 180 Autonome System angeschlossen\cite{decix}, knapp 41 Gbps durchschnittlicher Datenverkehr zeugen von hohem Durchsatz, denn fast alle Provider sind mit diesem Knoten verbunden
+
+\item[LINX] London Internet Exchange. Er ist Europas größter Peering-Point mit ca.\break 100 Gbps\cite{linx} durchschnittlichem Datenaufkommen.
+
+\item[NYIIX] New York International Internet Exchange, mit etwa 12 Gbps Durchsatz\cite{nyiix}.
+
+\item[AMS-IX] Amsterdamer Internet Exchange - 41,7 Gbps durchschnittlicher Durchsatz\cite{amsix}
+
+\item[EQUINIX] 81 Gbps durchschnittlicher Durchsatz, kombinierter Verkehr von 5 großen Knoten innerhalb der USA\cite{equinix}
+\end{description}
+Dies ist nur eine begrenzte Auswahl. Es gibt zwar noch ein paar Peering-Points mehr, diese haben jedoch viel weniger Daten zu verarbeiten und zu vermitteln. Der längerfristige Ausfall des \textit{DE-CIX} wäre sicherlich gut zu spüren. Wenn dann noch ein weiterer alternativer Peering-Point in Deutschland ausfallen würde könnte es schon zu größeren Problemen kommen. Mit einer solchen Alternative wäre ein Ausfall des \textit{DE-CIX} noch auszugleichen\cite{heise}.
+
+Es ist zu sehen, dass es viele Möglichkeiten gibt, Netzwerke anzugreifen. Es existieren viele Bedrohungen, die jeweils einer der Ebenen im Ebenenmodell zuzuordnen sind. Manche der Bedrohungen sind rein theoretischer Natur und haben noch nicht zu großen Problemen geführt. Jedoch soll diese Arbeit aufklären was möglich ist und die Bedrohungen benennen. Es sind auch Bedrohungen dabei, die bereits zu größeren Ausfällen auf Servern geführt haben. Ein paar von diesen Ausfällen werden im kommenden Absatz beschrieben.
+
+\section{Angriffshistorie}
+Diese Sektion beschreibt exemplarisch Angriffe auf HTTP-Server. Staatliche, wie auch 
+kommerzielle Seiten sind in den vergangen Jahren immer wieder solchen Angriffen ausgesetzt gewesen. Diese Daten können dazu benutzt werden, für die Zukunft aus diesen Angriffen zu lernen.
+\begin{description}
+ \item[26. Mai 1999, FBI] Der erste DoS-Angriff, der öffentlich diskutiert wurde war ein Angriff auf die Webseite des FBI\cite{zdnet}. Die US-Institution hatte nach einigen Angriffen auf US-Regierungscomputer eine Suche nach Personen der Hacker Gruppe "`Global Hell"' begonnen. Daraufhin wurde die Webseite des FBI von den Hackern ins Visier genommen. Mehrere Stunden wurde die Seite außer Gefecht gesetzt, so dass das FBI erst einmal keine andere Wahl hatte, als die Seite vom Netz zu nehmen, um größeren Schaden abzuwenden.
+ 
+\item[7. Februar 2000, Yahoo\texttrademark] Yahoo, mittlerweile ein große börsennotierte Gesellschaft, wurde Anfang 2000 mit einer sehr großen DoS-Attacke lahm gelegt. Nach Angaben von GlobalCenter\texttrademark, dem Webhoster von Yahoo, wurde zur Angriffszeit ein Datenaufkommen von 1 GBit pro Sekunde gemessen\cite{news}.
+%%%%% VERGLEICH
+Zum Vergleich: An einem ...
+%%% VERGLEICH
+Diese Ausmaß konnte der Server, trotz implementierter Filtermechanismen, die eine gewisse maximale Datenmenge garantieren sollten, nicht verkraften.
+ 
+\item[8. Februar 2000, Amazon\texttrademark, Buy.com\texttrademark, CNN\texttrademark, and eBay\texttrademark] Nachdem ei\-nen Tag zuvor Yahoo Ziel eines DoS-Angriffs war, wurden an diesem Tag gleich mehrere große Internetfirmen attackiert\cite{cnn}. Und genau, wie tagszuvor, war die riesige Menge an Datenaufkommen welche von hunderten oder gar tausenden Bots generiert wurde, von den Servern nicht zu bewältigen. So waren die Betreiber der Seiten gezwungen, ihre Inhalte für einige Stunden vom Netz zu nehmen. Auch am Tag danach wurden noch Webseiten wie ZDNet\texttrademark und E*Trade\texttrademark von einer Attacke betroffen\cite{news2}. Insgesamt wurde im Februar des Jahres 2000 das Thema \textit{DoS-Attacken} erstmals weltweit wahrgenommen. Viele kleine weitere Angriffe fanden noch statt, und Experten waren gefragt, mit welchen Maßnahmen man sich gegen solche Angriffe wehren könne.
+ 
+\item[21. Mai 2001 CERT] Für die Dauer von zwei Tagen wurde eine der wichtigsten Firmen für Internetsicherheitsthemen aufgrund einer DDoS-Attacke vom Netz genommen. Und diesmal ist zu sehen, dass selbst Internetfirmen wie CERT (Computer Emergency Response Team), die sich um die Sicherheit im Netz sorgen, nicht sicher vor DoS-Angriffen sind.
+ 
+\item[1. Februar 2004, SCO\texttrademark] Mit einem sich weit verbreitenden Wurm hat sich Ende Februar 2004 ein DDoS Angriff angekündigt, der die Softwareschmiede SCO treffen sollte. Schon Wochen vorher war bekannt, dass am 01.02.2004 ein großer Angriff auf die Webseite der Firma SCO wirken würde. Mit einem Wurm, der sich selbstständig weiterverbreitete\cite{symantecmydoom}, wurden Trojaner installiert. Bei diesen war schon im voraus bekannt, dass sie für den Angriff auf SCO konzipiert wurden. Nach einer Analyse von Sophos\texttrademark, eines Internetsicherheitsunternehmens, war im Januar 2004 dieser Wurm mit dem Namen \textit{MyDoom}\cite{bsimydoom} mit einem Anteil von $25,1\%$\cite{sophos} an der weltweiten Virenverseuchung beteiligt. Jedoch konnte trotz dieses Wissens eine solche Attacke auf die Webseite nicht verhindert werden. Mehrere Tage wurde die Seite mit einer Datenflut überhäuft. Die einzige Gegenmaßnahme, die getroffen wurde, war den DNS-Eintrag zu löschen, so dass der Server nur noch direkt über die IP-Adresse erreichbar war\cite{wikipediamydoom}.
+ 
+\item[04. Oktober 2004, holländische Regierung] Nicht nur kommerzielle Betreiber von Webseiten, sondern auch staatliche Seiten werden vermehrt Ziel von DoS-Attacken. Im Oktober 2004 wurden mehrere Server der holländischen Regierung angegriffen. Nach Angaben von Regierungssprechern\cite{isn} waren jedoch nur öffentliche Informationsseiten betroffen und keine sicherheitsrelevanten Seiten. Dieser Angriff erfolgte vermutlich nach Protesten gegen die Arbeit der Regierung und stand im Zusammenhang mit diesen Geschehnissen. Im Juni 2006 passierte ähnliches mit einem Regierungsserver der schwedischen Regierung. Auch dieser Webserver der Regierung mit informativem Inhalt wurde für einige Stunden außer Gefecht gesetzt\cite{thelocal}, nachdem bereits einen Tag zuvor die Webseite der schwedischen Polizei von einer DoS-Attacke betroffen war.
+\end{description}
+Wie an diesen Beispielen zu sehen ist, hat es in der jüngsten Vergangenheit zahlreiche Angriffe auf Computersysteme mit gesellschaftlicher Relevanz gegeben. Diese hier gewählte Zusammenstellung ist nur ein kleiner Ausschnitt aus der Historie der Angriffe. Um weitere Angriffe zu verhindern müssen Maßnahmen getroffen werden, die den Angreifern entgegen wirken.
+
+\section{Gegenmaßnahmen}
+Um Angriffen, wie z.B. Trojanereinschleusung oder DoS etwas entgegen zu wirken, müssen Maßnahmen getroffen werden. Solche Gegenmaßnahmen können sowohl direkt als auch indirekt wirken. Einige der klassischen Gegenmaßnahmen werden in den folgenden Abschnitten einmal kurz erläutert.
+
+\subsection{Präventive Maßnahmen}
+Präventiv sind jene Maßnahmen, die schon im voraus die Folgen eines Angriffs abschwächen sollen. So kann durch derartige Maßnahmen verhindert werden, dass Angriffe überhaupt stattfinden, wodurch ein Einschreiten nicht vonnöten ist.
+
+\subsubsection{Firewalls}
+\label{sec:firewall}
+Eine Firewall ist im Idealfall ein zusätzlicher, autonomer Rechner, der zwischen zwei Netzwerken installiert wird. So erreicht man, dass der gesamte Datenverkehr den diese Netzwerke austauschen, diese Firewall passieren muss. Solche Netzwerke bestehen im allgemeinen aus einem lokalen Netzwerk (LAN) und dem Internet. Diese Firewall ist nun dazu da, nach bestimmten Regeln, Pakete zu filtern. Somit kann das interne Netzwerk über die Firewall geschützt werden. Durch die Filterung ist es beispielsweise möglich, Rechnern aus dem Internet das Verbinden über ein "`unerlaubtes"' Protokoll mit einem internen Rechner zu verhindern.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{firewall}
+\caption{Grundprinzip einer Firewall}
+\label{fig:firewall}
+\end{figure} 
+
+Über eine Firewall kann also nach jeder in den Paketen oberhalb der IP-Ebene enthaltenen Informationen (Protokolltyp, Quellport, Zieladresse etc.) gefiltert werden. So lassen sich beispielsweise offene Ports von unsicher eingestuften Programmen vermeiden. Diese Ports sind zwar noch immer offen aber mit geeigneten Filterregeln nicht mehr von außen zu erreichen. Es lässt sich dadurch oberhalb der IP-Ebene der Zugang zum eigenen Netzwerk kontrollieren und beschränken, und somit Angreifern die Arbeit zumindest zu erschweren.
+
+Über eine Firewall können auch DoS-Attacken bekämpft werden. Sollte eine DoS-Attacke stattfinden, ist es Aufgabe des Administrators, eine Signatur in der Flut der ankommenden Pakete zu erkennen. Diese erkannten Merkmale können dann der Firewall mitgeteilt werden, welche dann dafür sorgt, dass Pakete mit diesen bekannten Merkmalen verworfen werden. So wird erreicht, dass die Paketflut zumindest nicht das interne Netzwerk erreicht. Die Firewall als solche kann nun aber trotz aller Vorsorge außer Gefecht gesetzt werden.
+
+\subsubsection{Verschlüsselung}
+\label{sec:schluessel}
+Mit der Verschlüsselung von Daten lässt sich zwar nicht verhindern, dass ein System angegriffen und beispielsweise durch eine DoS-Attacke lahm gelegt werden kann. Jedoch kann hierdurch die Integrität von Daten gewährleistet werden.
+
+Wie bei den Angriffen über Routingprotokolle schon erwähnt, können Angreifer durch das Einschleusen falscher Routinginformationen das Routing so beeinflussen, dass viele Pakete das System passieren, welches sie unter Kontrolle haben. So ist es dann möglich, Daten mitzulesen. Durch Verschlüsselung wird ein solches mitlesen unmöglich oder zumindest erschwert.
+
+So könnten auch Routinginformationen ausgetauscht werden, ohne dass ein mitlesender Dritter Einsicht in die Topologie des Netzwerks nehmen könnte.
+
+\subsubsection{Eingangsfilterung}
+Die auch als \textit{Ingress Filtering}\cite{rfc2827ingressfiltering} bekannte Methode ist eine von Netzbetreibern, speziell ISPs (Internet Service Provider), verwandte Methode. Sie verhindert, dass IP-Spoofing, also das Fälschen der Absender IP-Adresse über ihr Netzwerk, möglich ist. Mittels spezieller Paketfilter werden nur solche Pakete vom Kunden weitergeleitet, die als Absenderadresse auch wirklich die ihm zugeteilte Adresse enthält oder sich zumindest in dem providereigenen Subnetz befindet. Dadurch wird erreicht, dass das eigene Netz für Angreifer weniger attraktiv ist, da ihre Bots innerhalb dieses Netzwerks keine Quell-IP-Adressen fälschen können. Somit sind sie dann später auch leichter aufzuspüren.
+
+Präventive Maßnahmen sind notwendig, jedoch nicht das einzige Mittel, welches zur Sicherung von Netzwerken eingesetzt werden sollte. Jede präventive Maßnahme hat Schwächen die ausgenutzt werden können. Die präventiven Maßnahmen müssen durch Mechanismen ergänzt werden, die auf Angriffe reagieren.
+
+\subsection{Reaktive Maßnahmen}
+Die Erweiterung der Präventionsmaßnahmen sollten auf aktuelle Angriffe reagieren und deren Folgen mit geeigneten Maßnahmen abmildern oder ganz verhindern.
+
+\subsubsection{Intrusion Detection Systems}
+\label{sec:ids}
+Intrusion-Detection-Systeme bilden eine Einheit aus Anomalie- und Mustererkennung. Anhand bekannter Angriffe werden Signaturen erstellt, so dass mittels dieser Muster Datenströme analysiert und eingestuft werden können. Diese Methode funktioniert jedoch bisher nicht bekannten Angriffsmustern. Bei der Anomalieerkennung werden Datenströme mit einem "`Normalmodell"' verglichen. Werden Abweichungen oberhalb einer gewissen Toleranzschwelle erkannt, so können solche Datenströme als Angriffe eingestuft werden. Die Schwierigkeiten hierbei sind eine geeignete Wahl der Toleranzschwelle und die Definition des "`Normalmodells"'. Eine solches Intrusion-Detection-System kann leider auch missbraucht werden. So können Angreifer eine solche Anomalieerkennung durch gezielte Manipulation auch dazu bringen, legitimen Datenverkehr als Angriff zu interpretieren.
+
+\subsubsection{Antivirenprogramme}
+\label{sec:antiviren}
+Neben der Firewall, die die Pakete kontrolliert und deren Zulässigkeit prüft, sind Antivirenprogramme dazu da, Viren, die den Weg an der Firewall vorbei geschafft haben zu erkennen und zu vernichten oder zumindest unter Quarantäne zu stellen.
+
+Antivirenprogramme auf Endbenutzersystemen kontrollieren ständig das Dateisystem und reagieren sofort bei Veränderungen. Das heißt, sollte eine Datei abgelegt werden die für das Antivirenprogramm als gefährlich eingestuft wird, alarmiert es den Nutzer.
+
+Antivirenprogramme können aber auch, z.B. auf Mailservern installiert werden. So können eventuell in Mails enthaltene Viren schon abgefangen werden, bevor sie das Endsystem erreichen.
+
+Das Hauptproblem solcher Antivirenprogramme ist ihre Aktualität. Es können immer nur Viren erkannt werden, deren Struktur auch bekannt ist. Da aber täglich, oft sogar stündlich, neue Viren entstehen besteht, das Problem darin, diese neuen Viren ebenso zu erfassen, wie "`alte Bekannte"'. Daher sind solche Antivirenprogramme immer mit Updatefunktionen ausgestattet, die z.B. eine täglich Aktualisierung ermöglichen.
+
+Antivirenprogramme entdecken auch Trojaner, die sich in Systeme einnisten. Diese können dann von Angreifern genutzt werden um DDoS-Attacken auf bestimmte Ziele zu starten. Da nach dem Start einer solchen Attacke die Verhinderung eines Ausfalls sehr schwer fällt, ist also die Entdeckung und Beseitigung solcher Trojaner das primäre Ziel zur Verhinderung von DDoS-Attacken. Aufgrund dieser Tatsache könnten Antivirenprogramme auch als \textit{präventiv} gesehen werden.
+
+Diese Gegenmaßnahmen, aber auch andere, sollen dazu beitragen, dass ein Angriff auf Netzwerke oder einzelne Systeme gar nicht erst stattfinden oder zumindest erschwert werden. Trotzdem besteht die Gefahr, dass diese Maßnahmen nicht wirken und Ausfälle auftreten können.
+
+\section{Ausfallpläne}
+Bei allen Angriffen auf die Computersysteme der Welt, stellt sich doch nun die Frage, was passiert, wenn nun größere, weitläufigere DoS-Attacken gestartet würden. Hier setzt nun meine Arbeit an. Im praktischen Teil meiner Ausarbeitung wird exemplarisch eine Angriffsvariante in einen Simulator integriert und analysiert, welche Auswirkungen in dem angegriffenen Netzwerk zu erkennen sind.
+
+Prinzipiell ist der Angriff auf ein Netzwerk oder einen einzelnen Teilnehmer eines Netzwerkes leicht realisierbar. Sind genügend Bots im Internet "`platziert"', kann durch Aktivierung dieser Bots ein DDoS-Angriff gestartet werden.
+
+Daher könnte es im Extremfall eines großen Netzwerkabsturzes nötig sein, alternative Wege für eine Kommunikation zu nutzen. Da die Kritischen Infrastrukturen mehr und mehr von einem funktionierenden Nachrichtenaustausch abhängen, werden solchen Alternativen auch zunehmend größere Beachtung geschenkt.
+
+Eine dieser alternativen Nachrichtenwege wäre der \textit{Short Message Service} (SMS), welcher von Handynutzern zur Kommunikation mittels kleiner Textnachrichten genutzt wird. 
+
+\subsection{SMS}
+% http://www.smartmobs.com/archive/2004/10/06/dutch_governmen.html
+% http://www.smsanalysis.org/
+% auch sms betroffen von DoS
+Der \textit{Short Message Service} ist ein Nachrichtensystem des GSM Mobilfunks, welches zum Austausch kleiner Textnachrichten mit einer Länge von 140 (lateinischen) Zeichen entwickelt wurde. Um den Nachrichtenversand von einem PC über SMS zu ermöglichen, wurden sogenannte SMS-Gateways entwickelt. Mit diesen ist es möglich, eine SMS (Kurzform für die Nachricht über den Short Message Service) via PC zu versenden. Somit könnte also der eMail-Versand über SMS alternativ geschehen. Dazu sieht die GSM-Spezifikation von SMS (3GPP TS 03.40\cite{gsmsms}) diese Möglichkeit in Punkt 3.8 vor. So kann also die beidseitige Umsetzung von SMS zu eMail über ein kompatibles Gateway realisiert werden.
+
+Zudem muss der Empfänger auch hinter einem SMS-Gateway sitzen, der die SMS empfängt und sie an den Empfänger-PC weiterleitet. Dort muss dann die Rückwandlung von SMS zu eMail erledigt werden.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{sms}
+\caption{Struktur eines SMS SUBMIT Paketes mit SSH Daten}
+\label{fig:sms}
+\end{figure}
+Bei komplexerem Nachrichtenaustausch, z.B. einer verschlüsselten SSH-Sitzung, könnte eine Verbindung über binäre Kurznachrichten, wie sie ebenfalls in der SMS-Spezifikation unter 9.1 zu finden ist, genutzt werden. Diese Möglichkeit wird heute auch schon genutzt, um beispielsweise Klingeltöne auf Handys zu übertragen. Eine Kurznachricht beinhaltet eine Payload von 140 Byte. Da SSH-Pakete eine variable Länge haben, müssten diese entsprechend der SMS-Norm angepasst werden. In Abbildung~\ref{fig:sms} ist die grobe Struktur eines solchen Pakets zu sehen. SMS-SUBMIT-Pakete sind die Datenpakete, die von den \textit{Mobile Stations} an die \textit{Service Center}, d.h. von den Handys an die Netzbetreiber, gesendet werden.
+
+Der Short Message Service ist nicht für große Datenmengen ausgelegt. Mit HSCSD (\textit{High Speed Circuit Switched Data}), einer Erweiterung des GSM-Standards (3GPP TS 02.34\cite{gsmhscsd}) , ist eine Datenrate von maximal 57,6 kbit/s möglich. Dies reicht für eine einfache Verbindung, um beispielsweise Textdaten zu versenden, aus.
+
+\subsection{UMTS}
+Wenn eine schnellere Datenverbindung vonnöten ist, könnte auch UMTS (\textit{Universal Mobile Telecommunication System}), die neueste mobile Datenübertragungstechnik, verwendet werden. UMTS bietet eine Übertragungsrate von bis zu 2 Mbps\cite{gsmumts}. Diese Möglichkeit ist daher für große Datenvolumen gegenüber SMS/GSM vorzuziehen.
+
+\subsection{Alternativwege}
+Sowohl über SMS als auch über UMTS wäre eine Datenverbindung möglich, ohne vom Backbone des Internets abhängig zu sein. Dazu müsste ein Gateway installiert werden, welches bei einem Ausfall der Verbindung zum Internet, wie es in Abbildung~\ref{fig:umtsgateway} zu erkennen ist, zwischengeschaltet wird.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.8\textwidth]{umtsgateway}
+\caption{Alternativweg über UMTS}
+\label{fig:umtsgateway}
+\end{figure}
+
+Auf diesem Wege könnten sensible Verwaltungsstellen, beispielsweise über UMTS, weiterhin miteinander kommunizieren, ohne den Weg über Internetrouter beschreiten zu müssen. So wäre ein Datenaustausch dieser Verwaltungen auch zum Zeitpunkt eines größeren Ausfalls des Internets möglich. Diese würden dann über ein UMTS-Gateway kommunizieren, welches die Schnittstelle zwischen UMTS und dem internen Netzwerk bildet.
+
+Diese Variante ist jedoch für große Webseitenbetreiber keine wirkliche Alternative. Dies würde bedeuten, dass jeder einzelne Internetprovider ein solches UMTS Gateway einrichtet. Somit würde seinen Kunden ermöglicht, eine direkte Verbindung zu einer beliebigen, jedoch festen Webseite, die ebenfalls über ein UMTS-Gateway verfügen muss, aufzubauen. Diese wird dann bei Bedarf mit dem UMTS-Gateway des Providers verbunden und kann dann vom Kunden des Providers abgerufen werden.
+
+Es ist klar zu erkennen, dass das Erreichen von Webseiten vieler verschiedener Anbieter, von jedem Endbenutzer unmöglich zu realisieren ist, da jede Verbindung zu einer Webseite auch das Herstellen einer neuen UMTS-Verbindung nach sich ziehen würde. Bei Millionen von Webseiten weltweit und oftmals tausenden Kunden pro Provider wäre der "`Umweg"' über UMTS für einzelne Webseite praktisch nicht erreichbar.
+
+Aus der Theorie ist erkennbar, dass es ein breites Spektrum an Gefahren gibt, die Netzwerke, also auch Kritische Infrastrukturen, bedrohen. Diese Bedrohungen möglichst gering zu halten, sowie die Auswirkungen eines Angriffs zu vermindern oder gar zu eliminieren, ist Aufgabe der zukünftigen Forschung. Es müssen in Zukunft immer wieder Wege gefunden werden, die den Angreifern das Arbeiten zu erschweren oder es ihnen ganz und gar unmöglich zu machen, Infrastrukturen weltweit zu gefährden. Es sind schon einige Mechanismen bekannt und in der Anwendung, jedoch lassen sich findige "`Bösewichte"' immer wieder neue Strategien einfallen, die dann zu neuen Bedrohungen werden. Im nun folgenen praktischen Teil wird ein möglicher Angriff eines Netzwerks und eine geeignete Gegenmaßnahme in einem Simulator implementiert, um die theoretisch erläuterten Probleme zu illustrieren und die daraus gewonnenen Daten zu bewerten.

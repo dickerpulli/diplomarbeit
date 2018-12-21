@@ -1,0 +1,75 @@
+\chapter{Einleitung}
+\label{cha:einleitung}
+In den vergangenen Jahrzehnten hat das Thema Netzwerksicherheit (Network Security) immer mehr an Bedeutung gewonnen. Mit wachsenden IT-Strukturen wachsen auch die Möglichkeiten diese Strukturen anzugreifen. In den kommenden Jahren wird die Sicherheit in Netzwerken immer mehr zu einem zentralen Forschungsthema werden.
+
+\section{Motivation}
+Ausgehend von den stetig wachsenden IT-Strukturen gibt es immer mehr Menschen, die diese auch nutzen. Diese Entwicklung wird folgend mit statistischen Erhebungen belegt. Es wird gezeigt, wie sich dieser Wachstum auswirkt und welche Möglichkeiten dadurch für potentielle Angreifer geschaffen werden.  
+
+\subsection{Was ist}
+Die Zahl der Internetnutzer in Deutschland ist, wie in Abbildung~\ref{fig:internetnutzer} zu sehen, in den vergangenen Jahren von 1997 bis 2004 von $4,1$ auf $35,7$ Millionen gestiegen. Allein in diesen sieben Jahren hat sich die Nutzerzahl fast verneunfacht.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.7\textwidth]{folie215}
+\caption{Anzahl der Internetnutzer in Deutschland - Quelle: Infratest\cite{infratest215}} 
+\label{fig:internetnutzer}
+\end{figure}
+Somit stiegen auch die Möglichkeiten Angriffe auf Computernetzwerke auszuführen. Mit steigender Anzahl an Nutzern werden auch mehr Ressourcen benötigt, um diese Flut an Daten bewältigen zu können. Das sog. \textit{Backbone} des Internets, d.h. die Verbindung von Routern und Gateways über die der gesamte Verkehr fließt, musste demnach ebenfalls ausgebaut werden. Mehr Rechner bedeuten dann wieder mehr Angriffspunkte für potentielle Angreifer.
+
+Bis 2008 werden es laut Infratest\cite{infratest217} sogar $75,6$ Millionen Menschen in Deutschland sein, die das Internet nutzen. Hierbei ist zu beachten, dass verschiedene Institute auch verschiedene Herangehensweisen zur Erhebung der Schätzungen haben und je nach Definition des Begriffs "`Nutzung"' auch verschiedene Werte entstehen. So definiert das Institut EITO (European Information Technology Observatory) den Begriff Nutzer als: "`Personen, die das Internet mindestens einmal im Monat nutzen, unabhängig vom Alter  und Nutzungsort"'\cite{infratest217}. In Abbildung~\ref{fig:institute} ist zu sehen, dass die Zahlen unterschiedlich sind, abhängig vom Institut.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.7\textwidth]{folie216}
+\caption{Verschiedene Institute im Vergleich - Quelle: Infratest\cite{infratest216}}
+\label{fig:institute}
+\end{figure}
+
+Wie in Abbildung~\ref{fig:international} zu sehen ist, sehen die weltweiten Schätzungen im Vergleich zu den Schätzungen, die die deutsche Bevölkerung wiedergeben, nicht anders aus. Dort ist ein Wachstum des Internets von 1999 bis 2008 von $286$ Millionen auf $1,28$ Milliarden Nutzer zu sehen, was innerhalb von 4 Jahren eine Verdopplung bedeutet.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.7\textwidth]{folie186}
+\caption{Internationales Internetwachstum - Quelle: Infratest\cite{infratest186}} 
+\label{fig:international}
+\end{figure}
+
+Neben den privaten Nutzern sind es aber auch vor allem gewerbliche und staatliche Einrichtungen, die immer vermehrter die Ressourcen des Internets nutzen. So gibt es beispielsweise Internetplatformen der \textit{Agentur für Arbeit}\footnote{\url{http://www.agenturfuerarbeit.de}} oder gewerbliche Nutzung, wie die Handelsplatform \textit{ebay}\footnote{\url{http://www.ebay.de}}. Viele Arbeitsplätze und ein stetig steigender Anteil am Bruttoinlandsprodukt sind direkt oder indirekt mit dem Internet verknüpft. Die gesamtwirtschaftliche Bedeutung der IKT (Informations- und  Kommunikationstechnologien) hat sich von $4,7\%$ im Jahr 1995 auf $6,8\%$ im Jahr 2004 erhöht\cite{statistischesbundesamt}. Der genannte Prozentsatz bezieht sich auf den Anteil der IKT-Waren und IKT-Dienstleistungen am deutschen Bruttoinlandsprodukt. Dies ist nur die gewerbliche Form der Nutzung von IT-Strukturen. Weitere öffentliche Einrichtungen werden ebenso immer abhängiger von den Ressourcen des Internets.
+
+Weiterhin gibt es Strukturen, auch \textit{Kritische Infrastrukturen} genannt, die für die deutsche Gesellschaft von sehr großer Bedeutung sind.
+\begin{quotation}
+Organisationen und Einrichtungen mit wichtiger
+Bedeutung für das staatliche Gemeinwesen, bei
+deren Ausfall oder Beeinträchtigung nachhaltig
+wirkende Versorgungsengpässe, erhebliche
+Störungen der öffentlichen Sicherheit oder andere
+dramatische Folgen eintreten würden.
+\begin{flushright}
+(2004)
+\end{flushright}
+\end{quotation}
+
+Hierbei handelt es sich um ein Zitat\cite{kritis} des BSI (Bundesministerium für Sicherheit in der Informationstechnik). Kritische Infrastrukturen sind in Deutschland beispielsweise Transport und Verkehr, Energie, Finanzwesen, Versorgung oder Justiz. Alle diese Sektoren haben in Deutschland eine wichtige Bedeutung und deren Beeinträchtigung wäre für die Gesellschaft schwer zu verkraften. Durch verschiedenartige Angriffe könnten solche Beeinträchtigungen stattfinden. 
+
+\subsection{Was sein könnte}
+Fehlerhafte Software, Schadprogramme (z.B. Trojaner), Angriffe von innen und außen aber auch physische Einwirkungen, wie Blitzeinschläge oder terroristische Anschläge können die Funktionalität von Netzwerken behindern. Da Kritische Infrastrukturen kommunizieren auch über Netzwerke. Sie bilden ein Intranet. So können beispielsweise verschiedene Kontrollsysteme innerhalb dieses Intranets von beliebiger Stelle abgefragt werden können. Diese internen Netzwerke sind auch, genau wie das Internet durch unterschiedliche Faktoren bedroht. So können auch hier fehlerhafte Software oder Trojaner den Nachrichtenaustausch beeinträchtigen. Die Beeinträchtigung eines der Sektoren von Kritischen Infrastrukturen, z.B. des Transportsektors hätte alleine für den Wirtschaftsstandort Deutschland verheerende Folgen.
+
+Ein gezielter Angriff auf das Verkehrsleitsystem der Deutschen Bahn könnte den Ausfall von lokalen Betriebsstrecken bedeuten. Möglicherweise könnte es sogar zu einem bundesweiten Ausfall kommen. Dieses Beispiel zeigt, wie relevant die Sicherung solcher Strukturen ist. Es muss jederzeit gewährleistet sein, dass der Nachrichtenaustausch innerhalb der Netzwerke funktioniert. Daher sind Sicherstellungen der Verfügbarkeit, Integrität und Vertraulichkeit der Kritischen Infrastrukturen Hauptschutzziel des BSI.
+
+Mit steigender Nutzung der von Netzwerktechnologie in der Gesellschaft steigt auch die Gefahr, dass diese Technologie
+angegriffen wird. Der Nachrichtenaustausch in Netzwerken muss auch für den Fall garantiert sein, dass dieses Netzwerk angegriffen wird. Um das Verhalten eines Netzwerks oder einzelner Netzwerkkomponenten zu untersuchen, werden Netzwerksimulatoren entwickelt. Diese Simulatoren können der Überprüfung und Bewertung neu entwickelter Verteidigungsstrategien dienen.
+
+\section{Ziel der Arbeit}
+Diese Arbeit behandelt unterschiedliche Bedrohungen der Verfügbarkeit, Integrität und Vertraulichkeit von Netzwerken. Zu Beginn wird dies in einer theoretischen Betrachtung vertieft. Dieser theoretische Hintergrund dient dann dazu, nachzuvollziehen, wie sich solche in der Theorie bekannten Bedrohungen in der Praxis auswirken. Solche Bedrohungen beeinträchtigen den Nachrichtenaustausch innerhalb von Netzwerken. 
+
+Ziel ist es, die Bedeutsamkeit des Nachrichtenaustauschs innerhalb von Netzwerken darzustellen. Weiterhin soll in einer Simulation die Bedrohung und der Angriff eines Netzwerks implementiert und auf diesen reagiert werden. Dazu wird eine Gegenmaßnahme integriert, die dann den Austausch von Nachrichten während eines stattfindenen Angriffs weiterhin ermöglicht.
+
+\section{Aufbau der Arbeit}
+Um dieses Ziel zu erreichen, wird in Kapitel~\ref{cha:sota} zunächst der aktuelle Stand der Wissenschaft geschildert.
+
+In Kapitel~\ref{cha:theorie} werden dann ein paar Grundlagen im Thema Netzwerke erläutert anhand derer dann Bedrohungen und Schäden durch Angriffe auf IT-Strukturen betrachtet werden. Weiterhin wird dort untersucht, inwieweit solche Angriffe zu verhindern sind. Welche Gegenmaßnahmen existieren, um einen Angriff zumindest einzudämmen?
+
+Zudem gibt es in Kapitel~\ref{cha:theorie} noch einen historischen Rückblick, bei dem auf schon stattgefundene Angriffe eingegangen wird. Diese werden erläutert und es wird aufgezeigt, welche Maßnahmen bisher gegen die Verteidigung solcher Angriffe ergriffen wurden. Was lassen sich außerdem aus diesen Angriffen für Erkenntnisse mitnehmen? Wurde aus den Erfahrungen gelernt? Für den Fall, dass alle Maßnahmen der Abwehr scheitern, bleibt zuletzt nur noch die Möglichkeit andere Wege für den Nachrichtenaustausch zu finden. Wie können solche Notfallpläne aussehen? Welche anderen Ressourcen lassen sich hierzu nutzen? Es werden einige alternative Wege des Nachrichtenaustauschs heraus gestellt, wobei positive und negative Eigenschaften dieser Alternativen aufgezeigt werden.
+
+Kapitel~\ref{cha:praxis} beschreibt die Herangehensweise und Implementierung eines ausgewählten Angriffs in einem, im DAI-Labor entwickelten Netzwerksimulator namens \textbf{NeSSi} (Network Security Simulator). Weiterhin wird die Simulation eines Angriffs dann bewertet. Was passiert nun wirklich wären des Angriffs? Was bewirken die Gegenmaßnahmen, die nach dem Angriff eingeleitet werden, oder schon präventiv eingeleitet wurden? Dieser praktische Teil soll den theoretischen Teil unterstützen und die darin enthaltenen Ansätze zur Lösung des Problems "`Nachrichtenaustausch unter Angriff"' untersuchen.
+
+Zuletzt wird in Kapitel~\ref{cha:fazit} ein Fazit gezogen. Was lässt sich den Ergebnissen der Simulation entnehmen? Hier werden die Ergebnisse abschließend bewertet und in einen Ausblick integriert.
+
+Bevor theoretische und praktische Aspekte in den Vordergrund treten, wird  im folgenden Kapitel zunächst auf den aktuellen Stand der Wissenschaft eingegangen und deren Erkenntnisse zu diesem Thema dargelegt.
