@@ -1,0 +1,7 @@
+Thema
+Nachrichtenaustausch unter Angriff
+
+Aufgabenstellung
+Die immer stärkere Umsetzung von Prozessen und Geschäftsabläufen in IT Strukturen erhöht das mögliche Angriffspotential, erfordert somit immer weitere Sicherheitsmassnahmen und bringt Firmen zu der Fragestellung: „Wie kann man Angriffe erkennen, was kann man gegen Angriffe tun und was ist bei Angriffen noch möglich?“
+
+In der Diplomarbeit soll das folgende Beispielszenario visualisiert und untersucht werden. Es existiert ein Netz aus verschiedenen Rechnern, die miteinander kommunizieren. Innerhalb dieses Netzes sollen Nachrichten verschickt werden. Dann erfolgt ein äußerer Angriff auf das Netz und es muss ermittelt werden, wann das Versenden von Nachrichten innerhalb des Netzes (z.B. Alarmbotschaften) nicht mehr möglich ist. Zugleich soll demonstriert werden, wie Probleme innerhalb des Netzes durch autonome Einheiten behandelt werden. (z.B. Nachricht von A nach B, aber die Routing-Tabelle ist leer.) Es soll ermittelt werden, was autonome Entitäten tun (können), wenn gewisse Dienste plötzlich nicht mehr vorhanden sind. Die autonome Entität muss dann ermitteln, was noch möglich ist, und wie dies optimal genutzt werden kann. Die folgenden Fragestellungen stehen dabei im Fokus: Was geht in einem unter „Angriffen“ stehenden Netz noch? Welche Dienste können noch und wie genutzt werden? Welche Möglichkeiten haben autonome Entitäten noch, was sollten sie tun?

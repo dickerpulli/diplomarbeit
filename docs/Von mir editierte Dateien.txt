@@ -1,0 +1,57 @@
+Dateien, die ich verändert oder neu hinzugefügt habe (oder unter 
+anderem Namen kopiert)
+---------------------------------------------------------------------
+
+
+de.dailab.insin.netshield.
+->application.attack
+-->AttackRequest.java
+-->AttackerApp.java
+-->AttackerThread.java
+-->FragileWebServerApp.java
+-->FragileWebServerThread.java
+->agents.util
+-->GoalFactory.java (createSendAttackRequestGoal erstellt, unten mehr CreateDevice)
+->agents.ontology
+-->Device_DAI_1.onto (Attacker, FragileWebServer)
+-->Requests_DAI_1.onto (AttackRequest)
+->guicontrol.events.agents
+-->AgentEventSendAttackRequestFailure.java
+-->AgentEventSendAttackRequestSuccess.java
+-->AgentEvent.java (Konstante TYPE editiert)
+->guicontrol.events.gui
+-->SendAttackRequestEvent.java
+-->GuiEvent.java (Konstante TYPE editiert)
+->agents.gui.component
+-->GUIEventHandlerBean.java (SendAttackEvent abfangen)
+de.dailab.insin.devices
+-->.ecore (neue Devices) (neu->Other->src/java/main)
+
+nur 27.09.
+------------------
+de.dailab.insin.netshield.agents.gui.role
+-->GUIEventHandlerRole.java (ID_SEND_ATTACK_REQUEST)
+de.dailab.insin.netshield.gui.editors.networkEditor.action
+-->AttackAction.java
+de.dailab.insin.netshield.gui.wizards
+-->AttackWizard.java
+-->AttackWizardPage.java
+de.dailab.insin.netshield.gui.editors.networkEditor.part
+-->DeviceEditPart.java (Methode attack)
+de.dailab.insin.netshield.gui.editors.networkEditor
+-->NetworkActionContributor.java (AttackAction)
+-->NetworkEditor.java (AttackAction)
+-->NetworkEditorContextMenuProvider.java (AttackAction)
+de.dailab.insin.netshield.application.system
+-->ApplicationTypes.java (TYPE_ATTACKER, TYPE_FRAGILEWEBSERVER)
+de.dailab.insin.netshield.application
+-->ApplicationRequestFactory.java (AttackRequest)
+de.dailab.insin.netshield.rcp.util
+-->Constants.java (ICONS)
+de.dailab.insin.netshield.gui.editors.networkEditor.factories
+-->NetworkEditorPaletteFactory.java (Icons in der View)
+-->DeviceFatory.java (ICONS)
+de.dailab.insin.netshield.gui.editors.networkEditor.command
+-->NetConnectionCreateCommand.java (ATTACKER, FRAGILE)
+de.dailab.insin.netshield.agents.ip.components
+-->IPEndDeviceBean.java (ATTACKER)
